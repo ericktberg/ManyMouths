@@ -2,6 +2,9 @@
 {
     public class SecretsFile
     {
+        public const string DataDotGovKey = "api.Key.Gov";
+        public const string DbPasswordKey = "db.Password.ManyMouths";
+
         /// <summary>
         /// This should be a file adjacent to us
         /// </summary>
@@ -13,6 +16,11 @@
 
         public Dictionary<string, string> KVP { get; } = new();
 
+        public string DatabasePassword()
+        {
+            return GetSecret(DbPasswordKey);
+        }
+
         /// <summary>
         /// Loads our api key from the configuration file that contains it.
         /// If the config has already been loaded, return the existing API key
@@ -20,18 +28,22 @@
         /// <returns></returns>
         public string DataDotGovApiKey()
         {
+            return GetSecret(DataDotGovKey);
+        }
+
+        public string GetSecret(string key)
+        {
             if (!WasInit())
             {
                 Initialize();
             }
 
-            string dataDotGovKeyname = "DotGovApiKey";
-            if (!KVP.ContainsKey(dataDotGovKeyname))
+            if (!KVP.ContainsKey(key))
             {
-                throw new Exception("Cannot access data dot gov, API key not found.");
+                throw new Exception($"Cannot access secret, API key not found. [Key: {key}]");
             }
 
-            return KVP[dataDotGovKeyname];
+            return KVP[key];
         }
 
         public void Initialize()

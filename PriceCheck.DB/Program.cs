@@ -1,3 +1,4 @@
+using PriceCheck.DB.Controllers;
 using PriceCheck.DB.FoodCenter;
 
 namespace PriceCheck.DB
@@ -14,6 +15,7 @@ namespace PriceCheck.DB
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddSingleton<ManyMouthsDb>();
             builder.Services.AddSingleton<HttpClient>(new HttpClient());
             builder.Services.AddSingleton<SecretsFile>();
             builder.Services.AddTransient<FoodCenterConnection>();
