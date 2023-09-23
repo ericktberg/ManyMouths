@@ -1,12 +1,19 @@
-﻿namespace PriceCheck.DB.Controllers
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+using Microsoft.EntityFrameworkCore;
+
+namespace PriceCheck.DB.Controllers
 {
-    public class UsersRecord
+    [PrimaryKey(nameof(UserId))]
+    [Table("user")]
+    public class UserRecord
     {
-        public UsersRecord(int userId)
+        public UserRecord(int userId)
         {
             UserId = userId;
         }
 
+        [Column("user_id")]
         public int UserId { get; set; }
     }
 }

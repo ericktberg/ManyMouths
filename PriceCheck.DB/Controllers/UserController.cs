@@ -2,7 +2,6 @@
 
 namespace PriceCheck.DB.Controllers
 {
-
     public record RecipeRecord
     {
         public RecipeRecord(int recipeId, string recipeName)
@@ -20,55 +19,32 @@ namespace PriceCheck.DB.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        public UserController(ManyMouthsDb db)
+        public UserController(ManyMouthsContext db)
         {
             Db = db;
         }
 
-        public ManyMouthsDb Db { get; }
+        public ManyMouthsContext Db { get; }
 
         [HttpGet("{userId}")]
-        [ProducesResponseType(200, Type = typeof(UsersRecord))]
-        public async Task<IActionResult> Get(int id)
+        [ProducesResponseType(200, Type = typeof(UserRecord))]
+        public IActionResult Get(int id)
         {
-            var connection = Db.OpenConnection();
-            var command = connection.CreateCommand();
-            command.CommandText = "SELECT user_id FROM many_mouths.user WHERE user_id=@userId";
-            command.Parameters.AddWithValue("@userId", id);
-
-            using var reader = await command.ExecuteReaderAsync();
-            List<UsersRecord> users = new();
-            while (reader.Read())
-            {
-                var userId = reader.GetInt32(0);
-                var user = new UsersRecord(userId);
-                users.Add(user);
-            }
-            return Ok(users.FirstOrDefault());
+            var user = Db.Users.Single(user => user.UserId == id);
+            return Ok(user);
         }
 
         [HttpGet()]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<UsersRecord>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UserRecord>))]
         public async Task<IActionResult> GetList()
         {
             var users = await ReadUsers();
             return Ok(users);
         }
 
-        private async Task<IEnumerable<UsersRecord>> ReadUsers()
+        private async Task<IEnumerable<UserRecord>> ReadUsers()
         {
-            var connection = Db.OpenConnection();
-            var command = connection.CreateCommand();
-            command.CommandText = "SELECT user_id FROM many_mouths.user";
-            using var reader = await command.ExecuteReaderAsync();
-            List<UsersRecord> users = new();
-            while (reader.Read())
-            {
-                var userId = reader.GetInt32(0);
-                var user = new UsersRecord(userId);
-                users.Add(user);
-            }
-            return users;
+            return Db.Users.ToList();
         }
     }
 }

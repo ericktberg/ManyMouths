@@ -1,7 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace PriceCheck.DB.Controllers
 {
+    public class ManyMouthsContext : DbContext
+    {
+        public ManyMouthsContext(DbContextOptions<ManyMouthsContext> context) : base(context)
+        {
+        }
+
+        public DbSet<UserRecord> Users { get; set; }
+    }
+
     [ApiController]
     [Route("users/{userId}/recipes")]
     public class RecipeController : ControllerBase
