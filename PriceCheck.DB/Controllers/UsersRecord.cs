@@ -4,14 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PriceCheck.DB.Controllers
 {
+
     [PrimaryKey(nameof(UserId))]
     [Table("user")]
-    public class UserRecord
+    public class User
     {
-        public UserRecord(int userId)
-        {
-            UserId = userId;
-        }
+        // Other user properties...
+        public ICollection<RecipeOwner> RecipeOwners { get; set; }
 
         [Column("user_id")]
         public int UserId { get; set; }

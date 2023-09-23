@@ -1,27 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace PriceCheck.DB.Controllers
 {
-    public class ManyMouthsContext : DbContext
-    {
-        public ManyMouthsContext(DbContextOptions<ManyMouthsContext> context) : base(context)
-        {
-        }
-
-        public DbSet<UserRecord> Users { get; set; }
-    }
 
     [ApiController]
     [Route("users/{userId}/recipes")]
     public class RecipeController : ControllerBase
     {
-        public RecipeController(ManyMouthsDb db)
+        public RecipeController(ManyMouthsContext db)
         {
             Db = db;
         }
 
-        public ManyMouthsDb Db { get; }
+        public ManyMouthsContext Db { get; }
 
         //[HttpPost(Name = "users/{userId}/recipes")]
         //public async Task<IActionResult> Post(int inputUserId)
@@ -39,31 +30,13 @@ namespace PriceCheck.DB.Controllers
         //}
 
         [HttpGet()]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<RecipeRecord>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Recipe>))]
         public async Task<IActionResult> GetList(int userId)
         {
-            var connection = Db.OpenConnection();
-            var command = connection.CreateCommand();
-
-            command.CommandText =
-                "SELECT many_mouths.recipe.recipe_id, many_mouths.recipe.recipe_name " +
-                "FROM many_mouths.recipe " +
-                "INNER JOIN many_mouths.recipe_owner ON many_mouths.recipe_owner.recipe_id = many_mouths.recipe.recipe_id " +
-                "INNER JOIN many_mouths.user ON many_mouths.recipe_owner.user_id = many_mouths.user.user_id " +
-                "WHERE many_mouths.user.user_id=@userId ";
-
-            command.Parameters.AddWithValue("@userId", userId);
-
-            using var reader = await command.ExecuteReaderAsync();
-            List<RecipeRecord> recipes = new();
-            while (reader.Read())
-            {
-                var recipeId = reader.GetInt32(0);
-                var recipeName = reader.GetString(1);
-                var recipe = new RecipeRecord(recipeId, recipeName);
-                recipes.Add(recipe);
-            }
-            return Ok(recipes);
+            return Ok(Db.RecipeOwners
+                .Where(ro => ro.UserId == userId)
+                .Select(ro => ro.Recipe)
+                .ToList());
         }
     }
 }

@@ -27,22 +27,22 @@ namespace PriceCheck.DB.Controllers
         public ManyMouthsContext Db { get; }
 
         [HttpGet("{userId}")]
-        [ProducesResponseType(200, Type = typeof(UserRecord))]
-        public IActionResult Get(int id)
+        [ProducesResponseType(200, Type = typeof(User))]
+        public IActionResult Get(int userId)
         {
-            var user = Db.Users.Single(user => user.UserId == id);
+            var user = Db.Users.Single(user => user.UserId == userId);
             return Ok(user);
         }
 
         [HttpGet()]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<UserRecord>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
         public async Task<IActionResult> GetList()
         {
             var users = await ReadUsers();
             return Ok(users);
         }
 
-        private async Task<IEnumerable<UserRecord>> ReadUsers()
+        private async Task<IEnumerable<User>> ReadUsers()
         {
             return Db.Users.ToList();
         }
