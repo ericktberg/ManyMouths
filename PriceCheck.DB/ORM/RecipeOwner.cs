@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PriceCheck.DB.Controllers
+namespace PriceCheck.DB.ORM
 {
     [Table("recipe_owner")]
     public class RecipeOwner

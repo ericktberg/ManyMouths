@@ -2,7 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace PriceCheck.DB.Controllers
+namespace PriceCheck.DB.ORM
 {
 
     [PrimaryKey(nameof(UserId))]
@@ -10,7 +10,7 @@ namespace PriceCheck.DB.Controllers
     public class User
     {
         // Other user properties...
-        public ICollection<RecipeOwner> RecipeOwners { get; set; }
+        public ICollection<RecipeOwner> OwnedRecipes { get; set; }
 
         [Column("user_id")]
         public int UserId { get; set; }

@@ -1,18 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PriceCheck.DB.ORM;
 
 namespace PriceCheck.DB.Controllers
 {
-    public record RecipeRecord
+    public record UserDTO
     {
-        public RecipeRecord(int recipeId, string recipeName)
+        public int UserId { get; init; }
+
+        public List<int> RecipeIds { get; init; } = new();
+
+        public static UserDTO FromUserOrm(User user)
         {
-            RecipeId = recipeId;
-            RecipeName = recipeName;
+            return new UserDTO()
+            {
+                UserId = user.UserId,
+                RecipeIds = user.OwnedRecipes.Select(ro => ro.RecipeId).ToList()
+            };
         }
-
-        public int RecipeId { get; }
-
-        public string RecipeName { get; }
     }
 
     [ApiController]
@@ -30,21 +35,30 @@ namespace PriceCheck.DB.Controllers
         [ProducesResponseType(200, Type = typeof(User))]
         public IActionResult Get(int userId)
         {
-            var user = Db.Users.Single(user => user.UserId == userId);
+            var user = ReadUsers()
+                .Where(user => user.UserId == userId)
+                .Select(UserDTO.FromUserOrm)
+                .SingleOrDefault();
+
+            if (user is null)
+            {
+                return NotFound();
+            }
+
             return Ok(user);
         }
-
+        
         [HttpGet()]
         [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
-        public async Task<IActionResult> GetList()
+        public IActionResult GetList()
         {
-            var users = await ReadUsers();
+            var users = ReadUsers().Select(UserDTO.FromUserOrm).ToList();
             return Ok(users);
         }
 
-        private async Task<IEnumerable<User>> ReadUsers()
+        private IEnumerable<User> ReadUsers()
         {
-            return Db.Users.ToList();
+            return Db.Users.Include(u => u.OwnedRecipes);
         }
     }
 }

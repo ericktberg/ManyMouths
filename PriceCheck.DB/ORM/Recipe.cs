@@ -2,7 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace PriceCheck.DB.Controllers
+namespace PriceCheck.DB.ORM
 {
     [PrimaryKey(nameof(RecipeId))]
     [Table("recipe")]

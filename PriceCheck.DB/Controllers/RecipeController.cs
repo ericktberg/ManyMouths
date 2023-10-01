@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PriceCheck.DB.ORM;
 
 namespace PriceCheck.DB.Controllers
 {

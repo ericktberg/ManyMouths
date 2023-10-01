@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PriceCheck.DB.ORM;
 
 namespace PriceCheck.DB.Controllers
 {
@@ -16,12 +17,14 @@ namespace PriceCheck.DB.Controllers
             modelBuilder.Entity<RecipeOwner>()
                 .HasOne(ro => ro.Recipe)
                 .WithMany(r => r.RecipeOwners)
-                .HasForeignKey(ro => ro.RecipeId);
+                .HasForeignKey(ro => ro.RecipeId)
+                .IsRequired();
 
             modelBuilder.Entity<RecipeOwner>()
                 .HasOne(ro => ro.User)
-                .WithMany(u => u.RecipeOwners)
-                .HasForeignKey(ro => ro.UserId);
+                .WithMany(u => u.OwnedRecipes)
+                .HasForeignKey(ro => ro.UserId)
+                .IsRequired();
 
             base.OnModelCreating(modelBuilder);
         }
