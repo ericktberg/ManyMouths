@@ -5,7 +5,7 @@ using PriceCheck.DB.FoodCenter;
 namespace PriceCheck.DB.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api")]
     public class FoodCostController : ControllerBase
     {
         public FoodCostController(IServiceProvider serviceProvider)

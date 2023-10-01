@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+
+using Microsoft.EntityFrameworkCore;
+
+using PriceCheck.DB.DTOs;
 using PriceCheck.DB.ORM;
 
 namespace PriceCheck.DB.Controllers
 {
-
     [ApiController]
-    [Route("users/{userId}/recipes")]
+    [Route("api/users/{userId}/recipes")]
     public class RecipeController : ControllerBase
     {
         public RecipeController(ManyMouthsContext db)
@@ -15,29 +18,41 @@ namespace PriceCheck.DB.Controllers
 
         public ManyMouthsContext Db { get; }
 
-        //[HttpPost(Name = "users/{userId}/recipes")]
-        //public async Task<IActionResult> Post(int inputUserId)
-        //{
-        //    var connection = Db.OpenConnection();
-        //    var command = connection.CreateCommand();
-
-        //    command.CommandText =
-        //        "SELECT many_mouths.recipe.recipe_id, many_mouths.recipe.recipe_name" +
-        //        "FROM many_mouths.recipe" +
-        //        "INNER JOIN many_mouths.recipe_owner ON many_mouths.recipe_owner.recipe_id = many_mouths.recipe.recipe_id" +
-        //        "INNER JOIN many_mouths.user ON many_mouths.recipe_owner.user_id = many_mouths.user.user_id" +
-        //        "WHERE many_mouths.user.user_id=@userId";
-
-        //}
-
         [HttpGet()]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Recipe>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<RecipeDTO>))]
         public async Task<IActionResult> GetList(int userId)
         {
-            return Ok(Db.RecipeOwners
-                .Where(ro => ro.UserId == userId)
-                .Select(ro => ro.Recipe)
-                .ToList());
+            var ownedRecipes = Db.Recipes
+                .Include(r => r.IngredientQuantities)
+                    .ThenInclude(q => q.Ingredient)
+                .Include(r => r.RecipeOwners)
+                    .ThenInclude(r => r.User)
+                .Where(r => r.RecipeOwners.Any(o => o.UserId == userId));
+
+            var dto = ownedRecipes
+                .Select(RecipeDTO.FromRecipe)
+                .ToList();
+
+            return Ok(dto);
         }
+
+        [HttpPost()]
+        public async Task<IActionResult> Post(int userId, RecipeDTO recipeDTO)
+        {
+            var recipe = new Recipe();
+            Db.Project(recipe, recipeDTO);
+
+            Db.Recipes.Add(recipe);
+            var owner = new RecipeOwner()
+            {
+                UserId = userId,
+                Recipe = recipe
+            };
+            Db.RecipeOwners.Add(owner);
+            Db.SaveChanges();
+
+            return Ok(RecipeDTO.FromRecipe(recipe));
+        }
+
     }
 }

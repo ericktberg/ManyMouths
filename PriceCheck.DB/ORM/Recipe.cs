@@ -12,9 +12,14 @@ namespace PriceCheck.DB.ORM
         public int RecipeId { get; set; }
 
         [Column("recipe_name")]
-        public string RecipeName { get; set; }
+        public string RecipeName { get; set; } = "";
 
-        // Other recipe properties...
-        public ICollection<RecipeOwner> RecipeOwners { get; set; }
+        #region Navigation
+
+        public ICollection<RecipeQuant> IngredientQuantities { get; } = new List<RecipeQuant>();
+
+        public ICollection<RecipeOwner> RecipeOwners { get; } = new List<RecipeOwner>();
+
+        #endregion Navigation
     }
 }

@@ -2,8 +2,8 @@ using Microsoft.EntityFrameworkCore;
 
 using MySql.Data.MySqlClient;
 
-using PriceCheck.DB.Controllers;
 using PriceCheck.DB.FoodCenter;
+using PriceCheck.DB.ORM;
 
 namespace PriceCheck.DB
 {

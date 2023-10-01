@@ -2,7 +2,7 @@
 
 using MySql.Data.MySqlClient;
 
-namespace PriceCheck.DB.Controllers
+namespace PriceCheck.DB.ORM
 {
     public class ManyMouthsDb : IDisposable
     {

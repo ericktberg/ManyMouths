@@ -1,27 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PriceCheck.DB.DTOs;
 using PriceCheck.DB.ORM;
 
 namespace PriceCheck.DB.Controllers
 {
-    public record UserDTO
-    {
-        public int UserId { get; init; }
-
-        public List<int> RecipeIds { get; init; } = new();
-
-        public static UserDTO FromUserOrm(User user)
-        {
-            return new UserDTO()
-            {
-                UserId = user.UserId,
-                RecipeIds = user.OwnedRecipes.Select(ro => ro.RecipeId).ToList()
-            };
-        }
-    }
 
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/users")]
     public class UserController : ControllerBase
     {
         public UserController(ManyMouthsContext db)
