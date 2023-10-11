@@ -9,7 +9,7 @@ namespace PriceCheck.DB.ORM
         public string ChainName { get; set; }
 
         [Column("store_chain_id")]
-        public int StoreChainId { get; set; }
+        public Guid StoreChainId { get; set; }
 
         #region Navigation
 

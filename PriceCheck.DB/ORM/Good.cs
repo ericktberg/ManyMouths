@@ -15,7 +15,7 @@ namespace PriceCheck.DB.ORM
         public string FriendlyName { get; set; }
 
         [Column("good_id")]
-        public int GoodId { get; set; }
+        public Guid GoodId { get; set; }
 
         /// <summary>
         /// The PlU or UPC code associated with the good

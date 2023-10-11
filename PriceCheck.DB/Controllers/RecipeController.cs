@@ -20,7 +20,7 @@ namespace PriceCheck.DB.Controllers
 
         [HttpGet()]
         [ProducesResponseType(200, Type = typeof(IEnumerable<RecipeDTO>))]
-        public async Task<IActionResult> GetList(int userId)
+        public async Task<IActionResult> GetList(Guid userId)
         {
             var ownedRecipes = Db.Recipes
                 .Include(r => r.IngredientQuantities)
@@ -36,10 +36,14 @@ namespace PriceCheck.DB.Controllers
             return Ok(dto);
         }
 
-        [HttpPost()]
-        public async Task<IActionResult> Post(int userId, RecipeDTO recipeDTO)
+        [HttpPut("{recipeId}")]
+        public IActionResult Post(Guid userId, Guid recipeId, RecipeDTO recipeDTO)
         {
-            var recipe = new Recipe();
+            var recipe = Db.Recipes.Where(r => r.RecipeId == recipeId).FirstOrDefault();
+            recipe ??= new Recipe()
+            {
+                RecipeId = recipeId
+            };
             Db.Project(recipe, recipeDTO);
 
             Db.Recipes.Add(recipe);
@@ -51,8 +55,7 @@ namespace PriceCheck.DB.Controllers
             Db.RecipeOwners.Add(owner);
             Db.SaveChanges();
 
-            return Ok(RecipeDTO.FromRecipe(recipe));
+            return Created(recipe.RecipeId.ToString(), RecipeDTO.FromRecipe(recipe));
         }
-
     }
 }

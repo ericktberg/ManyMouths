@@ -19,7 +19,7 @@ namespace PriceCheck.DB.Controllers
 
         [HttpGet("{userId}")]
         [ProducesResponseType(200, Type = typeof(User))]
-        public IActionResult Get(int userId)
+        public IActionResult Get(Guid userId)
         {
             var user = ReadUsers()
                 .Where(user => user.UserId == userId)

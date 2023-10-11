@@ -9,7 +9,7 @@ namespace PriceCheck.DB.ORM
     public class RecipeQuant
     {
         [Column("ingredient_id")]
-        public int IngredientId { get; set; }
+        public Guid IngredientId { get; set; }
 
         /// <summary>
         /// In 100th counts e.g. 125 = 1.25
@@ -18,7 +18,7 @@ namespace PriceCheck.DB.ORM
         public int Quantity { get; set; }
 
         [Column("recipe_id")]
-        public int RecipeId { get; set; }
+        public Guid RecipeId { get; set; }
 
         [Column("unit")]
         public Units Unit { get; set; }

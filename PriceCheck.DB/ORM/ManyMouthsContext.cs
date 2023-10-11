@@ -1,9 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Runtime.InteropServices;
+
+using Microsoft.EntityFrameworkCore;
 
 using PriceCheck.DB.DTOs;
 
 namespace PriceCheck.DB.ORM
 {
+    public static class GuidInterop
+    {
+        [DllImport("rpcrt4.dll", SetLastError = true)]
+        private static extern int UuidCreateSequential(out Guid guid);
+
+        public static Guid CreateGuid()
+        {
+            UuidCreateSequential(out Guid guid);
+            return guid;
+        }
+    }
+
     public partial class ManyMouthsContext
     {
         public Ingredient GetOrAddIngredient(string ingredientName)
@@ -13,6 +27,7 @@ namespace PriceCheck.DB.ORM
             {
                 ingredient = new Ingredient()
                 {
+                    IngredientId = GuidInterop.CreateGuid(),
                     IngredientName = ingredientName
                 };
                 Ingredients.Add(ingredient);

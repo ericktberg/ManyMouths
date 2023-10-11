@@ -4,7 +4,7 @@ namespace PriceCheck.DB.DTOs
 {
     public record RecipeDTO
     {
-        public int Id { get; init; }
+        // public Guid Id { get; init; }
 
         public string Name { get; init; } = "";
 
@@ -16,7 +16,7 @@ namespace PriceCheck.DB.DTOs
 
             return new RecipeDTO()
             {
-                Id = recipe.RecipeId,
+                // Id = recipe.RecipeId,
                 Name = recipe.RecipeName,
                 Ingredients = ingredients
             };

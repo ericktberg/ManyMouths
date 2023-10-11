@@ -9,7 +9,7 @@ namespace PriceCheck.DB.ORM
     public class Ingredient
     {
         [Column("ingredient_id")]
-        public int IngredientId { get; set; }
+        public Guid IngredientId { get; set; }
 
         [Column("ingredient_name")]
         public string IngredientName { get; set; } = "";

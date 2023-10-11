@@ -6,10 +6,10 @@ namespace PriceCheck.DB.ORM
     public class RecipeOwner
     {
         [Column("recipe_id")]
-        public int RecipeId { get; set; }
+        public Guid RecipeId { get; set; }
 
         [Column("user_id")]
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
         #region Navigation
 

@@ -4,9 +4,9 @@ namespace PriceCheck.DB.DTOs
 {
     public record UserDTO
     {
-        public int UserId { get; init; }
+        public Guid UserId { get; init; }
 
-        public List<int> RecipeIds { get; init; } = new();
+        public List<Guid> RecipeIds { get; init; } = new();
 
         public static UserDTO FromUserOrm(User user)
         {

@@ -9,10 +9,10 @@ namespace PriceCheck.DB.ORM
     public class IngredientMapping
     {
         [Column("good_id")]
-        public int GoodId { get; set; }
+        public Guid GoodId { get; set; }
 
         [Column("ingredient_id")]
-        public int IngredientId { get; set; }
+        public Guid IngredientId { get; set; }
 
         [Column("mapping_id")]
         public int MappingId { get; set; }

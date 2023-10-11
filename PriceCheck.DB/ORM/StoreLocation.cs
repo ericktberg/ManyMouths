@@ -5,9 +5,9 @@ namespace PriceCheck.DB.ORM
     [Table("store_location")]
     public class StoreLocation
     {
-        public int StoreLocationId { get; set; }
+        public Guid StoreLocationId { get; set; }
 
-        public int StoreChainId { get; set; }
+        public Guid StoreChainId { get; set; }
 
         public string LocationAddress { get; set; } = "";
 
