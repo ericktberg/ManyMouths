@@ -1,15 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
+using JsonApiDotNetCore.Resources;
+using JsonApiDotNetCore.Resources.Annotations;
+
 namespace PriceCheck.DB.ORM
 {
     [Table("good")]
-    public class Good
+    [Resource]
+    public class Good : Identifiable<Guid>
     {
         /// <summary>
         /// How to interpret <see cref="StoreCode"/>
         /// </summary>
         [Column("code_type")]
-        public CodeTypes CodeType { get; set; }
+        public CodeTypes CodeType { get; set; } 
 
         [Column("friendly_name")]
         public string FriendlyName { get; set; }

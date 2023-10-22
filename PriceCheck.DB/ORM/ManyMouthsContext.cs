@@ -1,22 +1,9 @@
-﻿using System.Runtime.InteropServices;
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 using PriceCheck.DB.DTOs;
 
 namespace PriceCheck.DB.ORM
 {
-    public static class GuidInterop
-    {
-        [DllImport("rpcrt4.dll", SetLastError = true)]
-        private static extern int UuidCreateSequential(out Guid guid);
-
-        public static Guid CreateGuid()
-        {
-            UuidCreateSequential(out Guid guid);
-            return guid;
-        }
-    }
 
     public partial class ManyMouthsContext
     {
@@ -87,48 +74,50 @@ namespace PriceCheck.DB.ORM
 
         public DbSet<User> Users { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            modelBuilder.Entity<RecipeOwner>()
+            builder.Entity<User>().Property(x => x.Id).HasColumnName("user_id");
+
+            builder.Entity<RecipeOwner>()
                 .HasKey(ro => new { ro.RecipeId, ro.UserId });
 
-            modelBuilder.Entity<RecipeOwner>()
+            builder.Entity<RecipeOwner>()
                 .HasOne(ro => ro.Recipe)
                 .WithMany(r => r.RecipeOwners)
                 .HasForeignKey(ro => ro.RecipeId)
                 .IsRequired();
 
-            modelBuilder.Entity<RecipeOwner>()
+            builder.Entity<RecipeOwner>()
                 .HasOne(ro => ro.User)
                 .WithMany(u => u.OwnedRecipes)
                 .HasForeignKey(ro => ro.UserId)
                 .IsRequired();
 
-            modelBuilder.Entity<RecipeQuant>()
+            builder.Entity<RecipeQuant>()
                 .HasOne(rq => rq.Recipe)
                 .WithMany(r => r.IngredientQuantities)
                 .HasForeignKey(rq => rq.RecipeId)
                 .IsRequired();
 
-            modelBuilder.Entity<RecipeQuant>()
+            builder.Entity<RecipeQuant>()
                 .HasOne(rq => rq.Ingredient)
                 .WithMany()
                 .HasForeignKey(rq => rq.IngredientId)
                 .IsRequired();
 
-            modelBuilder.Entity<IngredientMapping>()
+            builder.Entity<IngredientMapping>()
                 .HasOne(im => im.Ingredient)
                 .WithMany(i => i.Mappings)
                 .HasForeignKey(im => im.IngredientId)
                 .IsRequired();
 
-            modelBuilder.Entity<IngredientMapping>()
+            builder.Entity<IngredientMapping>()
                 .HasOne(im => im.Good)
                 .WithMany(g => g.IngredientMappings)
                 .HasForeignKey(im => im.GoodId)
                 .IsRequired();
 
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
         }
     }
 }

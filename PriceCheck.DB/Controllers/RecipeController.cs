@@ -37,12 +37,33 @@ namespace PriceCheck.DB.Controllers
         }
 
         [HttpPut("{recipeId}")]
-        public IActionResult Post(Guid userId, Guid recipeId, RecipeDTO recipeDTO)
+        public IActionResult Put(Guid userId, Guid recipeId, RecipeDTO recipeDTO)
         {
             var recipe = Db.Recipes.Where(r => r.RecipeId == recipeId).FirstOrDefault();
             recipe ??= new Recipe()
             {
                 RecipeId = recipeId
+            };
+            Db.Project(recipe, recipeDTO);
+
+            Db.Recipes.Add(recipe);
+            var owner = new RecipeOwner()
+            {
+                UserId = userId,
+                Recipe = recipe
+            };
+            Db.RecipeOwners.Add(owner);
+            Db.SaveChanges();
+
+            return Created(recipe.RecipeId.ToString(), RecipeDTO.FromRecipe(recipe));
+        }
+
+        [HttpPost("")]
+        public IActionResult Post(Guid userId, RecipeDTO recipeDTO)
+        {
+            var recipe = new Recipe()
+            {
+                RecipeId = GuidInterop.CreateGuid()
             };
             Db.Project(recipe, recipeDTO);
 

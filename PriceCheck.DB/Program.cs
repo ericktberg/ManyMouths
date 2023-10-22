@@ -1,3 +1,5 @@
+using JsonApiDotNetCore.Configuration;
+
 using Microsoft.EntityFrameworkCore;
 
 using MySql.Data.MySqlClient;
@@ -36,10 +38,12 @@ namespace PriceCheck.DB
                         UserID = "root",
                         Password = password
                     };
+                    sb.OldGuids = true;
 
                     string connectionString = sb.ToString();
                     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
                 });
+            builder.Services.AddJsonApi<ManyMouthsContext>();
             builder.Services.AddSingleton<ManyMouthsDb>();
             builder.Services.AddSingleton<HttpClient>(new HttpClient());
             builder.Services.AddSingleton<SecretsFile>();
@@ -54,6 +58,7 @@ namespace PriceCheck.DB
                 app.UseSwaggerUI();
             }
 
+            app.UseJsonApi();
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
