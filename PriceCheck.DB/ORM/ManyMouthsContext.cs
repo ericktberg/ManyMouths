@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+using Microsoft.EntityFrameworkCore;
 
 using PriceCheck.DB.DTOs;
 
 namespace PriceCheck.DB.ORM
 {
-
     public partial class ManyMouthsContext
     {
         public Ingredient GetOrAddIngredient(string ingredientName)
@@ -40,22 +41,6 @@ namespace PriceCheck.DB.ORM
 
             return quant;
         }
-
-        public void Project(Recipe recipe, RecipeDTO recipeDTO)
-        {
-            recipe.RecipeName = recipeDTO.Name;
-            foreach (var ingredientDTO in recipeDTO.Ingredients)
-            {
-                var ingredient = GetOrAddIngredient(ingredientDTO.IngredientName);
-                var quant = GetOrAddQuant(recipe, ingredient, ingredientDTO);
-
-                if (recipe.IngredientQuantities.Contains(quant)) continue;
-                else
-                {
-                    recipe.IngredientQuantities.Add(quant);
-                }
-            }
-        }
     }
 
     public partial class ManyMouthsContext : DbContext
@@ -66,38 +51,19 @@ namespace PriceCheck.DB.ORM
 
         public DbSet<Ingredient> Ingredients { get; set; }
 
-        public DbSet<RecipeOwner> RecipeOwners { get; set; }
-
         public DbSet<RecipeQuant> RecipeQuants { get; set; }
 
         public DbSet<Recipe> Recipes { get; set; }
 
         public DbSet<User> Users { get; set; }
 
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<User>().Property(x => x.Id).HasColumnName("user_id");
-
-            builder.Entity<RecipeOwner>()
-                .HasKey(ro => new { ro.RecipeId, ro.UserId });
-
-            builder.Entity<RecipeOwner>()
-                .HasOne(ro => ro.Recipe)
-                .WithMany(r => r.RecipeOwners)
-                .HasForeignKey(ro => ro.RecipeId)
-                .IsRequired();
-
-            builder.Entity<RecipeOwner>()
-                .HasOne(ro => ro.User)
-                .WithMany(u => u.OwnedRecipes)
-                .HasForeignKey(ro => ro.UserId)
-                .IsRequired();
-
-            builder.Entity<RecipeQuant>()
-                .HasOne(rq => rq.Recipe)
-                .WithMany(r => r.IngredientQuantities)
-                .HasForeignKey(rq => rq.RecipeId)
-                .IsRequired();
+            builder.Entity<Recipe>().Property(x => x.Id).HasColumnName("recipe_id");
+            builder.Entity<RecipeOwner>().Property(x => x.Id).HasColumnName("recipe_owner_id");
 
             builder.Entity<RecipeQuant>()
                 .HasOne(rq => rq.Ingredient)
@@ -120,4 +86,5 @@ namespace PriceCheck.DB.ORM
             base.OnModelCreating(builder);
         }
     }
+
 }

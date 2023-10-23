@@ -1,25 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
+using JsonApiDotNetCore.Controllers.Annotations;
+using JsonApiDotNetCore.Resources;
+using JsonApiDotNetCore.Resources.Annotations;
+
+using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 namespace PriceCheck.DB.ORM
 {
-    [PrimaryKey(nameof(RecipeId))]
+    [Resource]
     [Table("recipe")]
-    public class Recipe
+    public class Recipe : Identifiable<Guid>
     {
-        [Column("recipe_id")]
-        public Guid RecipeId { get; set; }
-
         [Column("recipe_name")]
         public string RecipeName { get; set; } = "";
 
-        #region Navigation
-
-        public ICollection<RecipeQuant> IngredientQuantities { get; } = new List<RecipeQuant>();
-
+        [HasMany]
         public ICollection<RecipeOwner> RecipeOwners { get; } = new List<RecipeOwner>();
-
-        #endregion Navigation
     }
 }

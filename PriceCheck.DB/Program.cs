@@ -43,7 +43,10 @@ namespace PriceCheck.DB
                     string connectionString = sb.ToString();
                     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
                 });
-            builder.Services.AddJsonApi<ManyMouthsContext>();
+            builder.Services.AddJsonApi<ManyMouthsContext>(options =>
+            {
+                options.Namespace = "api";
+            });
             builder.Services.AddSingleton<ManyMouthsDb>();
             builder.Services.AddSingleton<HttpClient>(new HttpClient());
             builder.Services.AddSingleton<SecretsFile>();
