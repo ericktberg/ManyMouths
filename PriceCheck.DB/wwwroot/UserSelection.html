@@ -15,6 +15,9 @@
 
         .user-item {
             margin: 5px 0;
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -35,6 +38,9 @@
                 const userItem = document.createElement('div');
                 userItem.className = 'user-item';
                 userItem.textContent = `ID: ${user.userId}`;
+                userItem.onclick = () => {
+                    window.location.href = `/userrecipes.html?userId=${user.userId}`;
+                };
                 userList.appendChild(userItem);
             });
         }

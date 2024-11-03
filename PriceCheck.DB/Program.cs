@@ -19,8 +19,7 @@ namespace PriceCheck.DB
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllers();
-            builder.Services.AddRazorPages();
+            builder.Services.AddControllersWithViews();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -54,6 +53,11 @@ namespace PriceCheck.DB
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
+            }
 
             app.UseHttpsRedirection();
             app.UseStaticFiles(); // This line enables serving static files
@@ -61,12 +65,9 @@ namespace PriceCheck.DB
             app.UseAuthorization();
             app.MapControllers();
 
-            // Add an endpoint to serve the UserSelection.html file
-            app.MapGet("/", async context =>
-            {
-                context.Response.ContentType = "text/html";
-                await context.Response.SendFileAsync("wwwroot/UserSelection.html");
-            });
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }

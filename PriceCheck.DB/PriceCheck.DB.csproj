@@ -27,11 +27,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ControllerHtml\" />
     <Folder Include="wwwroot\NewFolder\" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\UserSelection.html" />
+    <None Include="wwwroot\userselection.html" />
   </ItemGroup>
 
 </Project>
