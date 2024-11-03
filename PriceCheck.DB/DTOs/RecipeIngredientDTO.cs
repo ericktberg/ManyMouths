@@ -4,9 +4,7 @@ namespace PriceCheck.DB.DTOs
 {
     public record RecipeIngredientDTO
     {
-        public string IngredientName { get; init; } = "";
-
-        public int IngredientId { get; init; }
+        public string Name { get; init; } = "";
 
         public double Quantity { get; init; }
 
@@ -16,8 +14,7 @@ namespace PriceCheck.DB.DTOs
         {
             return new RecipeIngredientDTO()
             {
-                IngredientName = quant.Ingredient.IngredientName,
-                IngredientId = quant.Ingredient.IngredientId,
+                Name = quant.Ingredient.Name,
                 Quantity = quant.Quantity * .01,
                 Unit = quant.Unit
             };

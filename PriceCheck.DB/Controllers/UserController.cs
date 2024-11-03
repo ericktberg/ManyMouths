@@ -5,46 +5,31 @@ using PriceCheck.DB.ORM;
 
 namespace PriceCheck.DB.Controllers
 {
-
     [ApiController]
-    [Route("api/users")]
-    public class UserController : ControllerBase
+    [Route("api/[controller]")]
+    public class UsersController : ControllerBase
     {
-        public UserController(ManyMouthsContext db)
+        private readonly ManyMouthsContext _context;
+
+        public UsersController(ManyMouthsContext context)
         {
-            Db = db;
+            _context = context;
         }
 
-        public ManyMouthsContext Db { get; }
-
-        [HttpGet("{userId}")]
-        [ProducesResponseType(200, Type = typeof(User))]
-        public IActionResult Get(int userId)
+        [HttpGet]
+        public IActionResult GetUsers()
         {
-            var user = ReadUsers()
-                .Where(user => user.UserId == userId)
-                .Select(UserDTO.FromUserOrm)
-                .SingleOrDefault();
-
-            if (user is null)
-            {
-                return NotFound();
-            }
-
-            return Ok(user);
-        }
-        
-        [HttpGet()]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
-        public IActionResult GetList()
-        {
-            var users = ReadUsers().Select(UserDTO.FromUserOrm).ToList();
+            var users = _context.Users.ToList();
             return Ok(users);
         }
 
-        private IEnumerable<User> ReadUsers()
+        [HttpPost]
+        public IActionResult AddUser()
         {
-            return Db.Users.Include(u => u.OwnedRecipes);
+            var user = new User();
+            _context.Users.Add(user);
+            _context.SaveChanges();
+            return Ok(user);
         }
     }
 }

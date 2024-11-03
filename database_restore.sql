@@ -19,7 +19,18 @@
 -- Table structure for table `good`
 --
 
-DROP TABLE IF EXISTS `good`;
+DROP TABLE IF EXISTS `store_location`; 
+DROP TABLE IF EXISTS `store_chain`; 
+DROP TABLE IF EXISTS `recipe_owner`; 
+DROP TABLE IF EXISTS `recipe`; 
+DROP TABLE IF EXISTS `recipe_quant`; 
+DROP TABLE IF EXISTS `good_transaction`; 
+DROP TABLE IF EXISTS `ingredient_mapping`; 
+DROP TABLE IF EXISTS `good`; 
+DROP TABLE IF EXISTS `ingredient`; 
+DROP TABLE IF EXISTS `mapping_owner`; 
+DROP TABLE IF EXISTS `user`; 
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `good` (

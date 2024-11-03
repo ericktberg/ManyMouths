@@ -16,8 +16,8 @@ namespace PriceCheck.DB.DTOs
 
             return new RecipeDTO()
             {
-                Id = recipe.RecipeId,
-                Name = recipe.RecipeName,
+                Id = recipe.Id,
+                Name = recipe.Name,
                 Ingredients = ingredients
             };
         }

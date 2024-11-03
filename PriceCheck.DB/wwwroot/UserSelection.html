@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Selection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .user-list {
+            margin-bottom: 20px;
+        }
+
+        .user-item {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Selection</h1>
+    <div class="user-list" id="userList">
+        <!-- Users will be displayed here -->
+    </div>
+    <button onclick="addUser()">Add User</button>
+
+    <script>
+        async function fetchUsers() {
+            const response = await fetch('/api/users');
+            const users = await response.json();
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '';
+            users.forEach(user => {
+                const userItem = document.createElement('div');
+                userItem.className = 'user-item';
+                userItem.textContent = `ID: ${user.userId}`;
+                userList.appendChild(userItem);
+            });
+        }
+
+        async function addUser() {
+            const response = await fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            });
+
+            if (response.ok) {
+                fetchUsers();
+            } else {
+                alert('Failed to add user');
+            }
+        }
+
+        // Fetch users when the page loads
+        window.onload = fetchUsers;
+    </script>
+</body>
+</html>

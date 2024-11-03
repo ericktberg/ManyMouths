@@ -8,12 +8,12 @@ namespace PriceCheck.DB.ORM
     {
         public Ingredient GetOrAddIngredient(string ingredientName)
         {
-            var ingredient = Ingredients.FirstOrDefault(i => string.Equals(i.IngredientName, ingredientName));
+            var ingredient = Ingredients.FirstOrDefault(i => string.Equals(i.Name, ingredientName));
             if (ingredient is null)
             {
                 ingredient = new Ingredient()
                 {
-                    IngredientName = ingredientName
+                    Name = ingredientName
                 };
                 Ingredients.Add(ingredient);
             }
@@ -41,10 +41,10 @@ namespace PriceCheck.DB.ORM
 
         public void Project(Recipe recipe, RecipeDTO recipeDTO)
         {
-            recipe.RecipeName = recipeDTO.Name;
+            recipe.Name = recipeDTO.Name;
             foreach (var ingredientDTO in recipeDTO.Ingredients)
             {
-                var ingredient = GetOrAddIngredient(ingredientDTO.IngredientName);
+                var ingredient = GetOrAddIngredient(ingredientDTO.Name);
                 var quant = GetOrAddQuant(recipe, ingredient, ingredientDTO);
 
                 if (recipe.IngredientQuantities.Contains(quant)) continue;

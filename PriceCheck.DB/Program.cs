@@ -20,6 +20,7 @@ namespace PriceCheck.DB
 
             // Add services to the container.
             builder.Services.AddControllers();
+            builder.Services.AddRazorPages();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -55,8 +56,17 @@ namespace PriceCheck.DB
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles(); // This line enables serving static files
+            app.UseRouting(); // Adds routing middleware to the pipeline
             app.UseAuthorization();
             app.MapControllers();
+
+            // Add an endpoint to serve the UserSelection.html file
+            app.MapGet("/", async context =>
+            {
+                context.Response.ContentType = "text/html";
+                await context.Response.SendFileAsync("wwwroot/UserSelection.html");
+            });
 
             app.Run();
         }

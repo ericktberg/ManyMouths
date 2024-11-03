@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PriceCheck.DB.ORM
 {
-    [PrimaryKey(nameof(RecipeId))]
+    [PrimaryKey(nameof(Id))]
     [Table("recipe")]
     public class Recipe
     {
         [Column("recipe_id")]
-        public int RecipeId { get; set; }
+        public int Id { get; set; }
 
         [Column("recipe_name")]
-        public string RecipeName { get; set; } = "";
+        public string Name { get; set; } = "";
 
         #region Navigation
 
