@@ -8,7 +8,7 @@ namespace PriceCheck.DB.DTOs
 
         public double Quantity { get; init; }
 
-        public Units Unit { get; init; }
+        public string Unit { get; init; }
 
         public static RecipeIngredientDTO FromQuant(RecipeQuant quant)
         {

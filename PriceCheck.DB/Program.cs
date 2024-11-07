@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 using MySql.Data.MySqlClient;
 
@@ -17,7 +18,6 @@ namespace PriceCheck.DB
             var configuration = configBuilder.Build();
 
             var builder = WebApplication.CreateBuilder(args);
-
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -46,6 +46,13 @@ namespace PriceCheck.DB
             builder.Services.AddTransient<FoodCenterConnection>();
 
             var app = builder.Build();
+
+            app.Use(async (context, next) =>
+            {
+                Console.WriteLine("Handling request: " + context.Request.Path);
+                await next.Invoke();
+                Console.WriteLine("Finished handling request.");
+            });
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

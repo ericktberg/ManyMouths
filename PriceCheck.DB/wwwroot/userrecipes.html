@@ -4,27 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Recipes</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        .recipe-list {
-            margin-bottom: 20px;
-        }
-
-        .recipe-item {
-            margin: 5px 0;
-        }
-    </style>
+    <link type="text/css" rel="stylesheet" href="base-styles.css" />
 </head>
 <body>
     <h1>User Recipes</h1>
+    <button id="createRecipeButton">Create Recipe</button>
     <div class="recipe-list" id="recipeList">
         <!-- Recipes will be displayed here -->
     </div>
 
-    <script>async function fetchUserRecipes() {
+    <script>
+        async function fetchUserRecipes() {
             const urlParams = new URLSearchParams(window.location.search);
             const userId = urlParams.get('userId');
             const response = await fetch(`/api/users/${userId}/recipes`);
@@ -37,9 +27,16 @@
                 recipeItem.textContent = `Recipe: ${recipe.name}`;
                 recipeList.appendChild(recipeItem);
             });
+
+            // Add userId to the URL of addrecipe.html
+            document.getElementById('createRecipeButton').onclick = function () {
+                window.location.href = `addrecipe.html?userId=${userId}`;
+            };
         }
 
         // Fetch user recipes when the page loads
-        window.onload = fetchUserRecipes;</script>
+        window.onload = fetchUserRecipes;
+
+    </script>
 </body>
 </html>

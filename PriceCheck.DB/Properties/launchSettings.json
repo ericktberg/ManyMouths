@@ -31,7 +31,7 @@
     "userrecipes.html": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "userselection.html",
+      "launchUrl": "userrecipes.html?user_id=1",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

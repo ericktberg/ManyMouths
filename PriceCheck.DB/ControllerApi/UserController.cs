@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 using PriceCheck.DB.DTOs;
 using PriceCheck.DB.ORM;
 
@@ -19,11 +20,21 @@ namespace PriceCheck.DB.Controllers
         [HttpGet("{userId}/recipes")]
         public async Task<IActionResult> GetUserRecipes(int userId)
         {
-            var recipes = await _context.Recipes
-                .Where(r => r.Id == userId)
-                .Include(r => r.IngredientQuantities)
+            User? user = await _context.Users
+                .Where(u => u.UserId == userId)
+                .Include(u => u.OwnedRecipes)
+                .ThenInclude(r => r.Recipe)
+                .ThenInclude(r => r.IngredientQuantities)
                 .ThenInclude(rq => rq.Ingredient)
-                .ToListAsync();
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var recipes = user.OwnedRecipes.Select(r => r.Recipe)
+                .Select(RecipeDTO.FromRecipe);
 
             return Ok(recipes);
         }

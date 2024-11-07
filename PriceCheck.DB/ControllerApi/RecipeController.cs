@@ -53,6 +53,14 @@ namespace PriceCheck.DB.Controllers
                 _context.Recipes.Add(recipe);
                 await _context.SaveChangesAsync();
 
+                // Associate the recipe with the user
+                var recipeOwner = new RecipeOwner
+                {
+                    RecipeId = recipe.Id,
+                    UserId = recipeDto.UserId
+                };
+                _context.RecipeOwners.Add(recipeOwner);
+
                 // Process each ingredient
                 foreach (var ingredientDto in recipeDto.Ingredients)
                 {
@@ -81,7 +89,8 @@ namespace PriceCheck.DB.Controllers
                     {
                         RecipeId = recipe.Id,
                         IngredientId = ingredient.Id,
-                        Quantity = (int)(ingredientDto.Quantity * 100) // Assuming quantity is in grams
+                        Quantity = (int)(ingredientDto.Quantity * 100), // Assuming quantity is in grams,
+                        Unit = ingredientDto.Unit
                     };
                     _context.RecipeQuants.Add(recipeQuant);
                 }
@@ -96,7 +105,7 @@ namespace PriceCheck.DB.Controllers
                     .ThenInclude(rq => rq.Ingredient)
                     .FirstOrDefaultAsync(r => r.Id == recipe.Id);
 
-                return CreatedAtAction(nameof(GetRecipeDetails), new { recipeId = recipe.Id }, createdRecipe);
+                return CreatedAtAction(nameof(GetRecipeDetails), recipe.Id, RecipeDTO.FromRecipe(createdRecipe));
             }
             catch (Exception ex)
             {

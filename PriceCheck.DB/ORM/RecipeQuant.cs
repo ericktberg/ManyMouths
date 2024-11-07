@@ -21,7 +21,7 @@ namespace PriceCheck.DB.ORM
         public int RecipeId { get; set; }
 
         [Column("unit")]
-        public Units Unit { get; set; }
+        public string Unit { get; set; }
 
         #region Navigations
 
