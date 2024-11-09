@@ -62,14 +62,14 @@ namespace PriceCheck.DB.ORM
         {
         }
 
+        public DbSet<Good> Goods { get; set; }
+        public DbSet<GoodTransaction> GoodTransactions { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
-
         public DbSet<RecipeOwner> RecipeOwners { get; set; }
-
         public DbSet<RecipeQuant> RecipeQuants { get; set; }
-
         public DbSet<Recipe> Recipes { get; set; }
-
+        public DbSet<StoreChain> StoreChains { get; set; }
+        public DbSet<StoreLocation> StoreLocations { get; set; }
         public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -111,6 +111,30 @@ namespace PriceCheck.DB.ORM
                 .HasOne(im => im.Good)
                 .WithMany(g => g.IngredientMappings)
                 .HasForeignKey(im => im.GoodId)
+                .IsRequired();
+
+            modelBuilder.Entity<Good>()
+                .HasKey(g => g.Id);
+
+            modelBuilder.Entity<StoreLocation>()
+                .HasKey(sl => sl.StoreLocationId);
+
+            modelBuilder.Entity<StoreChain>()
+                .HasKey(sc => sc.StoreChainId);
+
+            modelBuilder.Entity<GoodTransaction>()
+                .HasKey(gt => gt.Id);
+
+            modelBuilder.Entity<GoodTransaction>()
+                .HasOne(gt => gt.Good)
+                .WithMany(g => g.GoodTransactions)
+                .HasForeignKey(gt => gt.GoodId)
+                .IsRequired();
+
+            modelBuilder.Entity<GoodTransaction>()
+                .HasOne(gt => gt.StoreLocation)
+                .WithMany(sl => sl.GoodTransactions)
+                .HasForeignKey(gt => gt.StoreLocationId)
                 .IsRequired();
 
             base.OnModelCreating(modelBuilder);

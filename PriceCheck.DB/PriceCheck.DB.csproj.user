@@ -4,6 +4,6 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>userselection.html</ActiveDebugProfile>
+    <ActiveDebugProfile>inputreceipt.html</ActiveDebugProfile>
   </PropertyGroup>
 </Project>
