@@ -13,6 +13,9 @@
     </div>
     <iframe id="assignMappingFrame" style="display:none; width:100%; height:400px;"></iframe>
     <script>
+        let currentIngredientId;
+        let currentUserId;
+
         async function fetchRecipeDetails() {
             const urlParams = new URLSearchParams(window.location.search);
             const recipeId = urlParams.get('recipeId');
@@ -26,16 +29,18 @@
                 const ingredientItem = document.createElement('div');
                 ingredientItem.className = 'ingredient-item';
                 ingredientItem.innerHTML = `
-                        <span>${ingredient.name}</span>
-                        <button id='ingredient_${ingredient.id}' onclick="assignMapping(${ingredient.id}, ${userId})">
-                            ${recipe.ingredientMappings[ingredient.id] ? recipe.ingredientMappings[ingredient.id].name : 'Assign Mapping'}
-                        </button>
-                    `;
+                            <span>${ingredient.name}</span>
+                            <button id='ingredient_${ingredient.id}' onclick="assignMapping(${ingredient.id}, ${userId})">
+                                ${recipe.ingredientMappings[ingredient.id] ? recipe.ingredientMappings[ingredient.id].friendlyName : 'Assign Mapping'}
+                            </button>
+                        `;
                 recipeDetails.appendChild(ingredientItem);
             });
         }
 
         function assignMapping(ingredientId, userId) {
+            currentIngredientId = ingredientId;
+            currentUserId = userId;
             const iframe = document.getElementById('assignMappingFrame');
             iframe.src = `assignmapping.html?ingredientId=${ingredientId}&userId=${userId}`;
             iframe.style.display = 'block';
@@ -45,7 +50,13 @@
             const iframe = document.getElementById('assignMappingFrame');
             iframe.style.display = 'none';
 
-            // Update the button text when the mapping is assigned
+            // Fetch the updated mapping
+            const response = await fetch(`/api/IngredientMapping?ingredientId=${currentIngredientId}`);
+            if (response.ok) {
+                const updatedMapping = await response.json();
+                const button = document.getElementById(`ingredient_${currentIngredientId}`);
+                button.textContent = updatedMapping.friendlyName;
+            }
         }
 
         window.onload = fetchRecipeDetails;

@@ -133,15 +133,18 @@ namespace PriceCheck.DB.Controllers
             /* Get ingredient mappings now */
             var ingredientMappings = _context.Users
                 .Where(u => u.UserId == 1)
-                .Include(u => u.SelectedIngredientMappings);
-            Dictionary<int, IngredientMapping?> ingredientMappingsDict = new();
+                .Include(u => u.SelectedIngredientMappings)
+                .ThenInclude(sim => sim.Mapping)
+                .ThenInclude(m => m.Good);
+            Dictionary<int, GoodDTOLight?> ingredientMappingsDict = new();
             foreach (var i in recipeObj.IngredientQuantities.Select(iq => iq.IngredientId))
             {
                 var ingredientMapping = await ingredientMappings
                     .SelectMany(u => u.SelectedIngredientMappings)
                     .FirstOrDefaultAsync(im => im.IngredientId == i);
 
-                ingredientMappingsDict.Add(i, ingredientMapping?.Mapping);
+                var goodDto = ingredientMapping?.Mapping == null ? null : new GoodDTOLight(ingredientMapping.Mapping.Good);
+                ingredientMappingsDict.Add(i, goodDto);
             }
 
             if (recipeObj == null)

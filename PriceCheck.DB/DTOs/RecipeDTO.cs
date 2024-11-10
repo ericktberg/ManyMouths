@@ -1,4 +1,5 @@
-﻿using PriceCheck.DB.ORM;
+﻿using PriceCheck.DB.Controllers;
+using PriceCheck.DB.ORM;
 
 namespace PriceCheck.DB.DTOs
 {
@@ -19,12 +20,12 @@ namespace PriceCheck.DB.DTOs
     /// </summary>
     public record RecipeDetailDTO : RecipeDTO
     {
-        public RecipeDetailDTO(Recipe recipe, IDictionary<int, IngredientMapping?> ingredientMappings) : base(recipe)
+        public RecipeDetailDTO(Recipe recipe, IDictionary<int, GoodDTOLight?> ingredientMappings) : base(recipe)
         {
             IngredientMappings = ingredientMappings;
         }
 
-        public IDictionary<int, IngredientMapping?> IngredientMappings { get; }
+        public IDictionary<int, GoodDTOLight?> IngredientMappings { get; }
     }
 
     public record RecipeDTO : RecipeOverviewDTO
