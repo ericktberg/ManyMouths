@@ -4,15 +4,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PriceCheck.DB.ORM
 {
-
     [PrimaryKey(nameof(UserId))]
     [Table("user")]
     public class User
     {
-        // Other user properties...
-        public ICollection<RecipeOwner> OwnedRecipes { get; set; }
-
         [Column("user_id")]
         public int UserId { get; set; }
+
+        #region Navigation
+
+        public ICollection<RecipeOwner> OwnedRecipes { get; set; }
+
+        public ICollection<SelectedIngredientMapping> SelectedIngredientMappings { get; set; }
+
+        #endregion Navigation
     }
 }

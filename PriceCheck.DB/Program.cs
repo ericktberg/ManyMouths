@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 using MySql.Data.MySqlClient;
 
@@ -8,6 +7,36 @@ using PriceCheck.DB.ORM;
 
 namespace PriceCheck.DB
 {
+    public static class ServiceRegistration
+    {
+        public static IServiceCollection RegisterServices(this IServiceCollection services)
+        {
+            services.AddDbContext<ManyMouthsContext>(
+                options =>
+                {
+                    string password = services.BuildServiceProvider()
+                        .GetRequiredService<SecretsFile>()
+                        .GetSecret("db.Password.ManyMouths");
+                    var sb = new MySqlConnectionStringBuilder
+                    {
+                        Database = "many_mouths",
+                        Server = "localhost",
+                        Port = 3306,
+                        UserID = "root",
+                        Password = password
+                    };
+
+                    string connectionString = sb.ToString();
+                    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+                });
+            services.AddSingleton<HttpClient>(new HttpClient());
+            services.AddSingleton<SecretsFile>();
+            services.AddTransient<FoodCenterConnection>();
+
+            return services;
+        }
+    }
+
     public class Program
     {
         public static void Main(string[] args)
@@ -24,26 +53,7 @@ namespace PriceCheck.DB
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddDbContext<ManyMouthsContext>(
-                options =>
-                {
-                    string password = configuration.GetConnectionString("ManyMouthsDB");
-                    var sb = new MySqlConnectionStringBuilder
-                    {
-                        Database = "many_mouths",
-                        Server = "localhost",
-                        Port = 3306,
-                        UserID = "root",
-                        Password = password
-                    };
-
-                    string connectionString = sb.ToString();
-                    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-                });
-            builder.Services.AddSingleton<ManyMouthsDb>();
-            builder.Services.AddSingleton<HttpClient>(new HttpClient());
-            builder.Services.AddSingleton<SecretsFile>();
-            builder.Services.AddTransient<FoodCenterConnection>();
+            builder.Services.RegisterServices();
 
             var app = builder.Build();
 

@@ -2,24 +2,38 @@
 
 namespace PriceCheck.DB.DTOs
 {
-    public record RecipeDTO
+    public record RecipeOverviewDTO
     {
-        public int Id { get; init; }
+        public RecipeOverviewDTO(Recipe recipe)
+        {
+            Id = recipe.Id;
+            Name = recipe.Name;
+        }
+        public int Id { get; set; }
 
-        public string Name { get; init; } = "";
+        public string Name { get; set; }
+    }
+
+    /// <summary>
+    /// Include costing and ingredient mapping details with a recipe
+    /// </summary>
+    public record RecipeDetailDTO : RecipeDTO
+    {
+        public RecipeDetailDTO(Recipe recipe, IDictionary<int, IngredientMapping?> ingredientMappings) : base(recipe)
+        {
+            IngredientMappings = ingredientMappings;
+        }
+
+        public IDictionary<int, IngredientMapping?> IngredientMappings { get; }
+    }
+
+    public record RecipeDTO : RecipeOverviewDTO
+    {
+        public RecipeDTO(Recipe recipe) : base(recipe)
+        {
+            Ingredients = recipe.IngredientQuantities.Select(RecipeIngredientDTO.FromQuant).ToList();
+        }
 
         public List<RecipeIngredientDTO> Ingredients { get; init; } = new();
-
-        public static RecipeDTO FromRecipe(Recipe recipe)
-        {
-            var ingredients = recipe.IngredientQuantities.Select(RecipeIngredientDTO.FromQuant).ToList();
-
-            return new RecipeDTO()
-            {
-                Id = recipe.Id,
-                Name = recipe.Name,
-                Ingredients = ingredients
-            };
-        }
     }
 }

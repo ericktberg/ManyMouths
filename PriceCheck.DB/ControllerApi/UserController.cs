@@ -24,8 +24,6 @@ namespace PriceCheck.DB.Controllers
                 .Where(u => u.UserId == userId)
                 .Include(u => u.OwnedRecipes)
                 .ThenInclude(r => r.Recipe)
-                .ThenInclude(r => r.IngredientQuantities)
-                .ThenInclude(rq => rq.Ingredient)
                 .FirstOrDefaultAsync();
 
             if (user == null)
@@ -34,7 +32,7 @@ namespace PriceCheck.DB.Controllers
             }
 
             var recipes = user.OwnedRecipes.Select(r => r.Recipe)
-                .Select(RecipeDTO.FromRecipe);
+                .Select(r => new RecipeOverviewDTO(r));
 
             return Ok(recipes);
         }

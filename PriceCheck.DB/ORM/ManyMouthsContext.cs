@@ -1,61 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-using PriceCheck.DB.DTOs;
-
 namespace PriceCheck.DB.ORM
 {
-    public partial class ManyMouthsContext
-    {
-        public Ingredient GetOrAddIngredient(string ingredientName)
-        {
-            var ingredient = Ingredients.FirstOrDefault(i => string.Equals(i.Name, ingredientName));
-            if (ingredient is null)
-            {
-                ingredient = new Ingredient()
-                {
-                    Name = ingredientName
-                };
-                Ingredients.Add(ingredient);
-            }
-
-            return ingredient;
-        }
-
-        public RecipeQuant GetOrAddQuant(Recipe recipe, Ingredient ingredient, RecipeIngredientDTO ingredientDTO)
-        {
-            var quant = RecipeQuants.FirstOrDefault(rq => rq.Ingredient.Equals(ingredient) && rq.Recipe.Equals(recipe));
-            if (quant is null)
-            {
-                quant = new RecipeQuant()
-                {
-                    Ingredient = ingredient,
-                    Recipe = recipe,
-                    Quantity = (int)(ingredientDTO.Quantity * 100),
-                    Unit = ingredientDTO.Unit
-                };
-                RecipeQuants.Add(quant);
-            }
-
-            return quant;
-        }
-
-        public void Project(Recipe recipe, RecipeDTO recipeDTO)
-        {
-            recipe.Name = recipeDTO.Name;
-            foreach (var ingredientDTO in recipeDTO.Ingredients)
-            {
-                var ingredient = GetOrAddIngredient(ingredientDTO.Name);
-                var quant = GetOrAddQuant(recipe, ingredient, ingredientDTO);
-
-                if (recipe.IngredientQuantities.Contains(quant)) continue;
-                else
-                {
-                    recipe.IngredientQuantities.Add(quant);
-                }
-            }
-        }
-    }
-
     public partial class ManyMouthsContext : DbContext
     {
         public ManyMouthsContext(DbContextOptions<ManyMouthsContext> context) : base(context)
@@ -64,6 +10,10 @@ namespace PriceCheck.DB.ORM
 
         public DbSet<Good> Goods { get; set; }
         public DbSet<GoodTransaction> GoodTransactions { get; set; }
+        public DbSet<IngredientMapping> IngredientMappings { get; set; }
+
+        public DbSet<SelectedIngredientMapping> IngredientMappingSelections { get; set; }
+
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<RecipeOwner> RecipeOwners { get; set; }
         public DbSet<RecipeQuant> RecipeQuants { get; set; }
@@ -74,6 +24,7 @@ namespace PriceCheck.DB.ORM
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            /* Recipe Ownership */
             modelBuilder.Entity<RecipeOwner>()
                 .HasKey(ro => new { ro.RecipeId, ro.UserId });
 
@@ -89,6 +40,7 @@ namespace PriceCheck.DB.ORM
                 .HasForeignKey(ro => ro.UserId)
                 .IsRequired();
 
+            /* Recipe Ingredients */
             modelBuilder.Entity<RecipeQuant>()
                 .HasOne(rq => rq.Recipe)
                 .WithMany(r => r.IngredientQuantities)
@@ -101,27 +53,17 @@ namespace PriceCheck.DB.ORM
                 .HasForeignKey(rq => rq.IngredientId)
                 .IsRequired();
 
-            modelBuilder.Entity<IngredientMapping>()
-                .HasOne(im => im.Ingredient)
-                .WithMany(i => i.Mappings)
-                .HasForeignKey(im => im.IngredientId)
-                .IsRequired();
-
-            modelBuilder.Entity<IngredientMapping>()
-                .HasOne(im => im.Good)
-                .WithMany(g => g.IngredientMappings)
-                .HasForeignKey(im => im.GoodId)
-                .IsRequired();
-
             modelBuilder.Entity<Good>()
                 .HasKey(g => g.Id);
 
+            /* Store Locations  */
             modelBuilder.Entity<StoreLocation>()
                 .HasKey(sl => sl.StoreLocationId);
 
             modelBuilder.Entity<StoreChain>()
                 .HasKey(sc => sc.StoreChainId);
 
+            /* Good Transactions */
             modelBuilder.Entity<GoodTransaction>()
                 .HasKey(gt => gt.Id);
 
@@ -135,6 +77,35 @@ namespace PriceCheck.DB.ORM
                 .HasOne(gt => gt.StoreLocation)
                 .WithMany(sl => sl.GoodTransactions)
                 .HasForeignKey(gt => gt.StoreLocationId)
+                .IsRequired();
+
+            /* Ingredient Mapping */
+            modelBuilder.Entity<IngredientMapping>()
+                .HasOne(im => im.Ingredient)
+                .WithMany(i => i.Mappings)
+                .HasForeignKey(im => im.IngredientId)
+                .IsRequired();
+
+            modelBuilder.Entity<IngredientMapping>()
+                .HasOne(im => im.Good)
+                .WithMany(g => g.IngredientMappings)
+                .HasForeignKey(im => im.GoodId)
+                .IsRequired();
+
+            /* Ingredient Mapping Selection */
+            modelBuilder.Entity<SelectedIngredientMapping>()
+                .HasKey(ims => new { ims.UserId, ims.IngredientId });
+
+            modelBuilder.Entity<SelectedIngredientMapping>()
+                .HasOne(ims => ims.User)
+                .WithMany(u => u.SelectedIngredientMappings)
+                .HasForeignKey(ims => ims.UserId)
+                .IsRequired();
+
+            modelBuilder.Entity<SelectedIngredientMapping>()
+                .HasOne(ims => ims.Ingredient)
+                .WithMany()
+                .HasForeignKey(ims => ims.IngredientId)
                 .IsRequired();
 
             base.OnModelCreating(modelBuilder);

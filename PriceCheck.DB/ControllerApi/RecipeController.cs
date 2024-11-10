@@ -18,22 +18,6 @@ namespace PriceCheck.DB.Controllers
             _context = context;
         }
 
-        [HttpGet("{recipeId}")]
-        public async Task<IActionResult> GetRecipeDetails(int recipeId)
-        {
-            var recipe = await _context.Recipes
-                .Include(r => r.IngredientQuantities)
-                .ThenInclude(rq => rq.Ingredient)
-                .FirstOrDefaultAsync(r => r.Id == recipeId);
-
-            if (recipe == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(recipe);
-        }
-
         [HttpPost]
         public async Task<IActionResult> CreateRecipe([FromBody] RecipeCreationDto recipeDto)
         {
@@ -105,7 +89,7 @@ namespace PriceCheck.DB.Controllers
                     .ThenInclude(rq => rq.Ingredient)
                     .FirstOrDefaultAsync(r => r.Id == recipe.Id);
 
-                return CreatedAtAction(nameof(GetRecipeDetails), recipe.Id, RecipeDTO.FromRecipe(createdRecipe));
+                return CreatedAtAction(nameof(GetRecipeDetails), recipe.Id, new RecipeDTO(createdRecipe));
             }
             catch (Exception ex)
             {
@@ -113,6 +97,61 @@ namespace PriceCheck.DB.Controllers
                 await transaction.RollbackAsync();
                 return StatusCode(500, $"An error occurred while creating the recipe: {ex.Message}");
             }
+        }
+
+        [HttpDelete("{recipeId}")]
+        public async Task<IActionResult> DeleteRecipe(int recipeId)
+        {
+            var recipe = await _context.Recipes
+                .Include(r => r.IngredientQuantities)
+                .FirstOrDefaultAsync(r => r.Id == recipeId);
+
+            if (recipe == null)
+            {
+                return NotFound();
+            }
+
+            _context.Recipes.Remove(recipe);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpGet("{recipeId}")]
+        public async Task<IActionResult> GetRecipeDetails(int recipeId)
+        {
+            var recipeObj = await _context.Recipes
+                .Include(r => r.IngredientQuantities)
+                .ThenInclude(rq => rq.Ingredient)
+                .FirstOrDefaultAsync(r => r.Id == recipeId);
+
+            if (recipeObj == null)
+            {
+                return NotFound();
+            }
+
+            /* Get ingredient mappings now */
+            var ingredientMappings = _context.Users
+                .Where(u => u.UserId == 1)
+                .Include(u => u.SelectedIngredientMappings);
+            Dictionary<int, IngredientMapping?> ingredientMappingsDict = new();
+            foreach (var i in recipeObj.IngredientQuantities.Select(iq => iq.IngredientId))
+            {
+                var ingredientMapping = await ingredientMappings
+                    .SelectMany(u => u.SelectedIngredientMappings)
+                    .FirstOrDefaultAsync(im => im.IngredientId == i);
+
+                ingredientMappingsDict.Add(i, ingredientMapping?.Mapping);
+            }
+
+            if (recipeObj == null)
+            {
+                return NotFound();
+            }
+
+            var recipe = new RecipeDetailDTO(recipeObj, ingredientMappingsDict);
+
+            return Ok(recipe);
         }
 
         [HttpPut("{recipeId}")]
@@ -162,24 +201,6 @@ namespace PriceCheck.DB.Controllers
                 _context.RecipeQuants.Add(recipeQuant);
             }
 
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        [HttpDelete("{recipeId}")]
-        public async Task<IActionResult> DeleteRecipe(int recipeId)
-        {
-            var recipe = await _context.Recipes
-                .Include(r => r.IngredientQuantities)
-                .FirstOrDefaultAsync(r => r.Id == recipeId);
-
-            if (recipe == null)
-            {
-                return NotFound();
-            }
-
-            _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
 
             return NoContent();

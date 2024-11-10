@@ -107,7 +107,7 @@
                 GoodName: item.querySelector('[name="goodName"]').value,
                 CodeType: parseInt(item.querySelector('[name="codeType"]').value),
                 StoreCode: item.querySelector('[name="storeCode"]').value || null,
-                Price: parseInt(item.querySelector('[name="price"]').value),
+                Price: parseFloat(item.querySelector('[name="price"]').value),
                 Unit: item.querySelector('[name="unit"]').value
             }));
 
@@ -127,6 +127,7 @@
 
             if (response.ok) {
                 alert('Receipt submitted successfully!');
+                window.location.href = '/inputreceipt.html'; // Redirect to the same page to refresh it
             } else {
                 alert('Failed to submit receipt.');
             }

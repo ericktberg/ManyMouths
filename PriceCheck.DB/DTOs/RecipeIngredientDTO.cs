@@ -10,13 +10,16 @@ namespace PriceCheck.DB.DTOs
 
         public string Unit { get; init; }
 
+        public int Id { get; init; }
+
         public static RecipeIngredientDTO FromQuant(RecipeQuant quant)
         {
             return new RecipeIngredientDTO()
             {
                 Name = quant.Ingredient.Name,
                 Quantity = quant.Quantity * .01,
-                Unit = quant.Unit
+                Unit = quant.Unit,
+                Id = quant.IngredientId
             };
         }
     }

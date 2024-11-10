@@ -22,9 +22,12 @@
             const recipeList = document.getElementById('recipeList');
             recipeList.innerHTML = '';
             recipes.forEach(recipe => {
-                const recipeItem = document.createElement('div');
+                const recipeItem = document.createElement('button');
                 recipeItem.className = 'recipe-item';
                 recipeItem.textContent = `Recipe: ${recipe.name}`;
+                recipeItem.onclick = function () {
+                    window.location.href = `recipe.html?recipeId=${recipe.id}&userId=${userId}`;
+                };
                 recipeList.appendChild(recipeItem);
             });
 

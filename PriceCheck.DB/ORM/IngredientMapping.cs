@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PriceCheck.DB.ORM
 {
+
     [PrimaryKey(nameof(MappingId))]
     [Table("ingredient_mapping")]
     public class IngredientMapping
