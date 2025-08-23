@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 using PriceCheck.DB.DTOs;
+using PriceCheck.DB.FoodCenter;
 using PriceCheck.DB.ORM;
 
 namespace PriceCheck.DB.Controllers
@@ -10,10 +11,12 @@ namespace PriceCheck.DB.Controllers
     public class ReceiptController : ControllerBase
     {
         private readonly ManyMouthsContext _context;
+        private readonly FoodCenterConnection _foodCenterConnection;
 
-        public ReceiptController(ManyMouthsContext context)
+        public ReceiptController(ManyMouthsContext context, FoodCenterConnection foodCenterConnection)
         {
             _context = context;
+            this._foodCenterConnection = foodCenterConnection;
         }
 
         [HttpPost]
@@ -72,6 +75,22 @@ namespace PriceCheck.DB.Controllers
             await _context.SaveChangesAsync();
 
             return Ok("Receipt submitted successfully.");
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchFoodByName([FromQuery] string foodName)
+        {
+            if (string.IsNullOrEmpty(foodName))
+            {
+                return BadRequest("Food name is required.");
+            }
+
+            var searchResult = await _foodCenterConnection.SearchByName(foodName);
+
+            return searchResult.Match<IActionResult>(
+                some: foods => Ok(foods),
+                none: error => NotFound("No matching results found.")
+            );
         }
     }
 }

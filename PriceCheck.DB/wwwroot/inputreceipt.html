@@ -59,41 +59,86 @@
             const newItem = document.createElement('div');
             newItem.classList.add('item');
             newItem.innerHTML = `
-                    <div class="form-group">
-                        <label for="goodName">Good Name</label>
-                        <input type="text" id="goodName" name="goodName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="codeType">Code Type</label>
-                        <select id="codeType" name="codeType" required onchange="toggleStoreCode(this)">
-                            <option value="0" selected>None</option>
-                            <option value="1">PLU</option>
-                            <option value="2">UPC</option>
-                        </select>
-                    </div>
-                    <div class="form-group storeCodeGroup hidden">
-                        <label for="storeCode">Store Code</label>
-                        <input type="text" id="storeCode" name="storeCode">
-                    </div>
-                    <div class="form-group">
-                        <label for="price">Price</label>
-                        <input type="number" id="price" name="price" step=".01" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="unit">Unit</label>
-                        <input type="text" id="unit" name="unit" required>
-                    </div>
-                `;
+                        <div class="form-group">
+                            <label for="goodName">Good Name</label>
+                            <input type="text" id="goodName" name="goodName" required oninput="searchFood(this)">
+                            <select id="foodSearchResults" class="hidden" onchange="selectFood(this)">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="codeType">Code Type</label>
+                            <select id="codeType" name="codeType" required onchange="toggleStoreCode(this)">
+                                <option value="0" selected>None</option>
+                                <option value="1">PLU</option>
+                                <option value="2">UPC</option>
+                            </select>
+                        </div>
+                        <div class="form-group storeCodeGroup">
+                            <label for="storeCode">Store Code</label>
+                            <input type="text" id="storeCode" name="storeCode">
+                        </div>
+                        <div class="form-group">
+                            <label for="price">Price</label>
+                            <input type="number" id="price" name="price" step=".01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="unit">Unit</label>
+                            <input type="text" id="unit" name="unit" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="brand">Brand</label>
+                            <input type="text" id="brand" name="brand" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="packageWeight">Package Weight</label>
+                            <input type="text" id="packageWeight" name="packageWeight" readonly>
+                        </div>
+                    `;
             itemsDiv.appendChild(newItem);
+        }
+
+        async function searchFood(inputElement) {
+            const foodName = inputElement.value;
+            if (foodName.length < 3) {
+                return;
+            }
+
+            const response = await fetch(`/api/receipt/search?foodName=${foodName}`);
+            if (response.ok) {
+                const foods = await response.json();
+                const selectElement = inputElement.nextElementSibling;
+                selectElement.innerHTML = foods.map(food => `
+                        <option value='${JSON.stringify(food)}'>
+                            <strong>${food.brandOwner}</strong> - ${food.description} <em>(${food.packageWeight})</em>
+                        </option>
+                    `).join('');
+                selectElement.classList.remove('hidden');
+            }
+        }
+
+        function selectFood(selectElement) {
+            const selectedFood = JSON.parse(selectElement.value);
+            const itemDiv = selectElement.closest('.item');
+            itemDiv.querySelector('[name="goodName"]').value = selectedFood.description;
+            itemDiv.querySelector('[name="codeType"]').value = selectedFood.gtinUpc ? 2 : 0;
+            const storeCodeInput = itemDiv.querySelector('[name="storeCode"]');
+            if (selectedFood.gtinUpc) {
+                storeCodeInput.value = selectedFood.gtinUpc;
+                storeCodeInput.setAttribute('readonly', 'readonly');
+            } else {
+                storeCodeInput.value = '';
+                storeCodeInput.removeAttribute('readonly');
+            }
+            itemDiv.querySelector('[name="brand"]').value = selectedFood.brandOwner;
+            itemDiv.querySelector('[name="packageWeight"]').value = selectedFood.packageWeight;
+            selectElement.classList.add('hidden');
         }
 
         function toggleStoreCode(selectElement) {
             const storeCodeGroup = selectElement.closest('.item').querySelector('.storeCodeGroup');
             if (selectElement.value === "0") {
-                storeCodeGroup.classList.add('hidden');
                 storeCodeGroup.querySelector('input').removeAttribute('required');
             } else {
-                storeCodeGroup.classList.remove('hidden');
                 storeCodeGroup.querySelector('input').setAttribute('required', 'required');
             }
         }
@@ -108,7 +153,9 @@
                 CodeType: parseInt(item.querySelector('[name="codeType"]').value),
                 StoreCode: item.querySelector('[name="storeCode"]').value || null,
                 Price: parseFloat(item.querySelector('[name="price"]').value),
-                Unit: item.querySelector('[name="unit"]').value
+                Unit: item.querySelector('[name="unit"]').value,
+                Brand: item.querySelector('[name="brand"]').value,
+                PackageWeight: item.querySelector('[name="packageWeight"]').value
             }));
 
             const receiptData = {

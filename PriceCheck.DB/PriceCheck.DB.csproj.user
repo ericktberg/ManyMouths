@@ -4,6 +4,6 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>userrecipes.html</ActiveDebugProfile>
+    <ActiveDebugProfile>PriceCheck.DB</ActiveDebugProfile>
   </PropertyGroup>
 </Project>

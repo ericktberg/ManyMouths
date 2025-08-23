@@ -1,35 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+using PriceCheck.DB.DTOs;
 using PriceCheck.DB.ORM;
 
 namespace PriceCheck.DB.Controllers
 {
-    public record IngredientMappingCreationDTO
-    {
-        public int IngredientId { get; set; }
-
-        public int GoodId { get; set; }
-
-        public int UserId { get; set; }
-    }
-
-    public record GoodDTOLight
-    {
-        public GoodDTOLight(Good good)
-        {
-            Id = good.Id;
-            FriendlyName = good.FriendlyName;
-        }
-
-        public GoodDTOLight()
-        {
-        }
-
-        public int Id { get; set; }
-
-        public string FriendlyName { get; set; }
-    }
 
     [ApiController]
     [Route("api/[controller]")]
