@@ -15,7 +15,7 @@ export function ListsView() {
       </View>
 
       {/* Empty state */}
-      <View className="text-center py-12">
+      <View className="items-center py-12">
         <Text className="text-6xl mb-4">🛒</Text>
         <Text className="text-muted-foreground font-medium mb-2">
           No grocery lists yet

@@ -1,3 +1,5 @@
+import { appColors } from './colors';
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: ["./app/**/*.{js,jsx,ts,tsx}"],
@@ -38,16 +40,7 @@ module.exports = {
                 ring: "#ff6b35",
 
                 // food colors
-                tomato: "#ff6b47",
-                carrot: "#ff8c42",
-                lime: "#32d74b",
-                blueberry: "#007aff",
-                eggplant: "#5856d6",
-                banana: "#ffcc02",
-                avocado: "#30d158",
-                cherry: "#ff2d92",
-                orange: "#ff9500",
-                grape: "#af52de",
+                ...appColors
             },
             borderRadius: {
                 sm: "0.5rem",

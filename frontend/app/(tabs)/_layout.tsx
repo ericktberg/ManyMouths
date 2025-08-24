@@ -1,18 +1,78 @@
-import { Tabs } from 'expo-router';
+// app/_layout.tsx
+import { Tabs } from "expo-router";
+import { ShoppingCart, BookIcon, LucideIcon } from "lucide-react-native";
+import { Text, View, Animated } from "react-native";
+import { appColors } from "@/colors";
 
-export default function TabLayout() {
+function TabBarButton({
+    title,
+    Icon,
+    focused,
+    activeColor,
+}: {
+    title: string;
+    Icon: LucideIcon;
+    focused: boolean;
+    activeColor: string;
+}) {
     return (
-        <Tabs screenOptions={{ headerShown: false }}>
-            <Tabs.Screen
-                name="index"
-                options={{
-                    title: "Hello"
-                }} />
+        <View
+            className="items-center px-3 py-2 rounded-lg min-h-[48px] min-w-[48px]"
+        >
+            <Icon
+                size={22}
+                color={focused ? activeColor : appColors.textdisabledforeground}
+            />
+            <Text
+                className={`text-xs ${focused ? `font-semibold` : ""}`}
+                style={{
+                    color: focused ? activeColor : appColors.textdisabledforeground,
+                }}
+            >
+                {title}
+            </Text>
+        </View>
+    );
+}
+
+// Your layout function
+export default function Layout() {
+    return (
+        <Tabs
+            screenOptions={{
+                headerShown: false,
+                tabBarShowLabel: false,
+            }}
+        >
             <Tabs.Screen
                 name="grocerylist/index"
                 options={{
-                    title: 'Groceries'
-                }} />
+                    title: "Groceries",
+                    tabBarIcon: ({ focused }) => (
+                        <TabBarButton
+                            title="Groceries"
+                            Icon={ShoppingCart}
+                            focused={focused}
+                            activeColor={appColors.blueberry}
+                        />
+                    ),
+                }}
+            />
+
+            <Tabs.Screen
+                name="index"
+                options={{
+                    title: "Recipes",
+                    tabBarIcon: ({ focused }) => (
+                        <TabBarButton
+                            title="Recipes"
+                            Icon={BookIcon}
+                            focused={focused}
+                            activeColor={appColors.grape}
+                        />
+                    ),
+                }}
+            />
         </Tabs>
     );
 }
