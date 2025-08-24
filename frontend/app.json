@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "frontend",
+    "slug": "frontend",
+    "version": "1.0.0",
+    "scheme": "frontend",
+    "platforms": ["ios", "android", "web"],
+    "sdkVersion": "51.0.0",
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "apiUrl": "http://localhost:5000/api"
+    },
+    "googleServicesFile": "...",
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": ["./assets/fonts/Nunito-Regular.ttf", "./assets/fonts/Nunito-Bold.ttf"]
+        }
+      ]
+    ]
+  }
+}
