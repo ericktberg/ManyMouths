@@ -45,7 +45,7 @@ export default function Layout() {
             }}
         >
             <Tabs.Screen
-                name="grocerylist/index"
+                name="groceries"
                 options={{
                     title: "Groceries",
                     tabBarIcon: ({ focused }) => (
@@ -60,7 +60,7 @@ export default function Layout() {
             />
 
             <Tabs.Screen
-                name="index"
+                name="recipes"
                 options={{
                     title: "Recipes",
                     tabBarIcon: ({ focused }) => (
