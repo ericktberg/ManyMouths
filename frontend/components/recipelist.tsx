@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView, Alert } from 'react-native';
 import { Plus, Timer, Users, ChefHat, Play, MapPin } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { RecipeOverviewDTO, RecipesService } from '@/src/api-client';
 
 export interface Recipe {
   id: string;
@@ -15,11 +16,10 @@ export interface Recipe {
   image?: string;
 }
 
-
 interface RecipeListProps {
   onCreateRecipe: () => void;
-  onRecipeClick: (recipeId: string) => void;
-  onMapIngredients: (recipeId: string) => void;
+  onRecipeClick: (recipeId?: number) => void;
+  onMapIngredients: (recipeId?: number) => void;
 }
 
 // Custom Button component for better reusability and handling state
@@ -41,34 +41,44 @@ const CustomButton = ({ children, onPress, className, disabled, ...props }: any)
 };
 
 export function RecipeList({ onCreateRecipe, onRecipeClick, onMapIngredients }: RecipeListProps) {
-  const handleRecipeLongPress = (recipe: Recipe) => {
-    Alert.alert(
-      'Recipe Options',
-      `Choose an action for ${recipe.name}`,
-      [
-        {
-          text: 'Cook Recipe',
-          onPress: () => onRecipeClick(recipe.id),
-        },
-        {
-          text: 'Map Ingredients',
-          onPress: () => onMapIngredients(recipe.id),
-        },
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-      ]
-    );
-  };
+  const [recipes, setRecipes] = useState<RecipeOverviewDTO[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string>("");
 
   const getTagColor = (index: number) => {
     const colors = ['#FF6347', '#9ACD32', '#4169E1', '#8A2BE2', '#FFA500']; // Using hex codes for compatibility
     return colors[index % colors.length];
   };
 
-  // State to manage hover behavior for each card
-  const [hoveredCardId, setHoveredCardId] = React.useState<string | null>(null);
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+
+        const fetchedData = await RecipesService.getApiRecipes();
+
+        console.log('Fetched data:', fetchedData);
+
+        setRecipes(fetchedData);
+      }
+      catch (e) {
+        setError("Failed to fetch recipes");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRecipes();
+  }, []);  // Run once per component
+
+  if (isLoading)
+  {
+    return <Text>Loading...</Text>
+  }
+  else if (error !== "")
+  {
+    return <Text>{error}</Text>
+  }
+
 
   return (
     <ScrollView contentContainerClassName="p-4" className="w-full items-center">
@@ -87,43 +97,42 @@ export function RecipeList({ onCreateRecipe, onRecipeClick, onMapIngredients }: 
         </Pressable>
       </View>
 
-      <View className="space-y-4">
-        {sampleRecipes.map((recipe) => (
+   <View className="space-y-4">
+        {recipes.map((recipe) => (
           <Pressable
             key={recipe.id}
             onPress={() => onRecipeClick(recipe.id)}
-            onLongPress={() => handleRecipeLongPress(recipe)}
             className={`bg-white rounded-xl p-4 shadow-sm border border-gray-200 hover:transform hover:scale-[1.02] hover:border-orange
                 hover:shadow-md`}
           >
             <View className="flex-row justify-between items-start mb-3">
               <View className="bg-green-500 px-2 py-1 rounded-full">
-                <Text className="text-white text-xs font-semibold">${recipe.estimatedCost.toFixed(2)}</Text>
+                <Text className="text-white text-xs font-semibold">$Cost</Text>
               </View>
               <View className="flex-row items-center gap-1 text-gray-400">
                 <Users size={12} color="#9CA3AF" />
-                <Text className="text-xs font-medium text-gray-400">{recipe.servings}</Text>
+                <Text className="text-xs font-medium text-gray-400">servings</Text>
               </View>
             </View>
 
             <View className="mb-3">
               <Text className="font-bold text-lg text-gray-900 mb-1">{recipe.name}</Text>
-              <Text className="text-sm text-gray-500 leading-relaxed">{recipe.description}</Text>
+              <Text className="text-sm text-gray-500 leading-relaxed">description</Text>
             </View>
-              
+
             <View className="flex-row items-center gap-4 mb-3">
               <View className="flex-row items-center gap-1">
                 <Timer size={12} color="#9CA3AF" />
-                <Text className="text-xs text-gray-500">Prep {recipe.prepTime}m</Text>
+                <Text className="text-xs text-gray-500">Prep Time</Text>
               </View>
               <View className="flex-row items-center gap-1">
                 <ChefHat size={12} color="#9CA3AF" />
-                <Text className="text-xs text-gray-500">Cook {recipe.cookTime}m</Text>
+                <Text className="text-xs text-gray-500">Cook Time</Text>
               </View>
             </View>
 
             <View className="flex-row flex-wrap gap-2 mb-4">
-              {recipe.tags.slice(0, 3).map((tag, index) => (
+              {[].slice(0, 3).map((tag, index) => (
                 <View
                   key={tag}
                   className="rounded-full px-2 py-1"
@@ -157,8 +166,7 @@ export function RecipeList({ onCreateRecipe, onRecipeClick, onMapIngredients }: 
           </Pressable>
         ))}
       </View>
-
-      {sampleRecipes.length === 0 && (
+      {recipes.length === 0 && (
         <View className="text-center py-12 items-center">
           <Text className="text-6xl mb-4">👨‍🍳</Text>
           <Text className="text-xl font-bold text-gray-900 mb-2">No recipes yet</Text>

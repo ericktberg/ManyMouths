@@ -50,6 +50,17 @@ namespace PriceCheck.DB
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowMyOrigins",
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:8081")  // Expo localhost
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
+            });
+
             builder.Services.RegisterServices();
 
             var app = builder.Build();
@@ -69,6 +80,7 @@ namespace PriceCheck.DB
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
+            app.UseCors("AllowMyOrigins");
 
             app.MapControllers(); // Only maps API controllers
 

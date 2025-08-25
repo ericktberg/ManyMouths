@@ -117,7 +117,23 @@ namespace PriceCheck.DB.Controllers
             return NoContent();
         }
 
+        [HttpGet()]
+        [ProducesResponseType(typeof(IEnumerable<RecipeOverviewDTO>), 200)]
+        public async Task<IActionResult> GetAllRecipes()
+        {
+            var recipes = await _context.Recipes
+                .ToListAsync();
+
+            if (recipes == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(recipes.Select(recipe => new RecipeOverviewDTO(recipe)));
+        }
+
         [HttpGet("{recipeId}")]
+        [ProducesResponseType(typeof(RecipeDetailDTO), 200)]
         public async Task<IActionResult> GetRecipeDetails(int recipeId)
         {
             var recipeObj = await _context.Recipes

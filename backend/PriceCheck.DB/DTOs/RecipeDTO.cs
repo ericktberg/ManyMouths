@@ -10,6 +10,7 @@ namespace PriceCheck.DB.DTOs
             Id = recipe.Id;
             Name = recipe.Name;
         }
+
         public int Id { get; set; }
 
         public string Name { get; set; }
