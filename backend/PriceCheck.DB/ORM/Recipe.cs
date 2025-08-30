@@ -14,6 +14,18 @@ namespace PriceCheck.DB.ORM
         [Column("recipe_name")]
         public string Name { get; set; } = "";
 
+        [Column("recipe_description")]
+        public string Description { get; set; }
+
+        [Column("recipe_prep_minutes")]
+        public int PrepTimeMinutes { get; }
+
+        [Column("recipe_cook_minutes")]
+        public int CookTimeMinutes { get; }
+
+        [Column("recipe_servings_count")]
+        public int Servings { get; }
+
         #region Navigation
 
         public ICollection<RecipeQuant> IngredientQuantities { get; } = new List<RecipeQuant>();

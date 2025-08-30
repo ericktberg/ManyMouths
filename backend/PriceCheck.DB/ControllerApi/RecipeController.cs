@@ -121,7 +121,11 @@ namespace PriceCheck.DB.Controllers
         [ProducesResponseType(typeof(IEnumerable<RecipeOverviewDTO>), 200)]
         public async Task<IActionResult> GetAllRecipes()
         {
-            var recipes = await _context.Recipes
+            List<Recipe> recipes = await _context.Recipes
+                //.Include(r => r.IngredientQuantities)
+                //    .ThenInclude(rq => rq.Ingredient)
+                //    .ThenInclude(i => i.Mappings)
+                //    .ThenInclude(map => map.Good)
                 .ToListAsync();
 
             if (recipes == null)

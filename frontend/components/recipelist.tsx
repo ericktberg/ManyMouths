@@ -107,27 +107,28 @@ export function RecipeList({ onCreateRecipe, onRecipeClick, onMapIngredients }: 
           >
             <View className="flex-row justify-between items-start mb-3">
               <View className="bg-green-500 px-2 py-1 rounded-full">
+
                 <Text className="text-white text-xs font-semibold">$Cost</Text>
               </View>
               <View className="flex-row items-center gap-1 text-gray-400">
                 <Users size={12} color="#9CA3AF" />
-                <Text className="text-xs font-medium text-gray-400">servings</Text>
+                <Text className="text-xs font-medium text-gray-400">{recipe.servings} servings</Text>
               </View>
             </View>
 
             <View className="mb-3">
               <Text className="font-bold text-lg text-gray-900 mb-1">{recipe.name}</Text>
-              <Text className="text-sm text-gray-500 leading-relaxed">description</Text>
+              <Text className="text-sm text-gray-500 leading-relaxed">{recipe.description}</Text>
             </View>
 
             <View className="flex-row items-center gap-4 mb-3">
               <View className="flex-row items-center gap-1">
                 <Timer size={12} color="#9CA3AF" />
-                <Text className="text-xs text-gray-500">Prep Time</Text>
+                <Text className="text-xs text-gray-500">{recipe.prepTimeMinutes} minutes</Text>
               </View>
               <View className="flex-row items-center gap-1">
                 <ChefHat size={12} color="#9CA3AF" />
-                <Text className="text-xs text-gray-500">Cook Time</Text>
+                <Text className="text-xs text-gray-500">{recipe.cookTimeMinutes} minutes</Text>
               </View>
             </View>
 

@@ -3,7 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 export type RecipeOverviewDTO = {
-    id?: number;
-    name?: string | null;
+    readonly id?: number;
+    readonly name?: string | null;
+    readonly description?: string | null;
+    readonly prepTimeMinutes?: number;
+    readonly cookTimeMinutes?: number;
+    readonly servings?: number;
 };
 

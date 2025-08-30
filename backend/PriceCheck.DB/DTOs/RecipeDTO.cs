@@ -1,19 +1,52 @@
-﻿using PriceCheck.DB.Controllers;
-using PriceCheck.DB.ORM;
+﻿using PriceCheck.DB.ORM;
 
 namespace PriceCheck.DB.DTOs
 {
+    public enum RecipeCostingStatus
+    {
+        /// <summary>
+        /// There is simply not enough information to even infer a total price
+        /// </summary>
+        NotEnoughInformation,
+        InferencesMade,
+        FullyCalculated
+    }
+
+    public record RecipeCostingDTO
+    {
+        public RecipeCostingDTO()
+        {
+
+        }
+
+        public double SmartCostTotal { get; }
+
+        public double GroceryCostTotal { get; }
+    }
+
     public record RecipeOverviewDTO
     {
         public RecipeOverviewDTO(Recipe recipe)
         {
             Id = recipe.Id;
             Name = recipe.Name;
+            Description = recipe.Description;
+            PrepTimeMinutes = recipe.PrepTimeMinutes;
+            CookTimeMinutes = recipe.CookTimeMinutes;
+            Servings = recipe.Servings;
         }
 
-        public int Id { get; set; }
+        public int Id { get; }
 
-        public string Name { get; set; }
+        public string Name { get; }
+
+        public string Description { get; }
+
+        public int PrepTimeMinutes { get; }
+
+        public int CookTimeMinutes { get; }
+
+        public int Servings { get; }
     }
 
     /// <summary>

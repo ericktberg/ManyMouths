@@ -7,6 +7,10 @@ import type { RecipeQuant } from './RecipeQuant';
 export type Recipe = {
     id?: number;
     name?: string | null;
+    description?: string | null;
+    readonly prepTimeMinutes?: number;
+    readonly cookTimeMinutes?: number;
+    readonly servings?: number;
     readonly ingredientQuantities?: Array<RecipeQuant> | null;
     readonly recipeOwners?: Array<RecipeOwner> | null;
 };
