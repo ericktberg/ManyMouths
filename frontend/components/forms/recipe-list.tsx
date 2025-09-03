@@ -4,18 +4,6 @@ import { Plus, Timer, Users, ChefHat, Play, MapPin } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { RecipeOverviewDTO, RecipesService } from '@/src/api-client';
 
-export interface Recipe {
-  id: string;
-  name: string;
-  description: string;
-  prepTime: number;
-  cookTime: number;
-  servings: number;
-  tags: string[];
-  estimatedCost: number;
-  image?: string;
-}
-
 interface RecipeListProps {
   onCreateRecipe: () => void;
   onRecipeClick: (recipeId?: number) => void;

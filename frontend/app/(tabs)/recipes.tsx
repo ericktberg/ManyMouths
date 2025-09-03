@@ -1,4 +1,4 @@
-import { RecipeList } from "@/components/recipelist";
+import { RecipeList } from "@/components/forms/recipe-list";
 import { router } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
@@ -8,6 +8,7 @@ const handleRecipeClick = (recipeId?: number) => {
 };
 
 const handleCreateRecipe = () => {
+    router.push('recipes/create');
 };
 
 const handleMapIngredients = (recipeId?: number) => {
