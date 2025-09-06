@@ -2,7 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace PriceCheck.DB.ORM
+namespace PriceCheck.DB.Persistence.Entities
 {
 
     [PrimaryKey(nameof(MappingId))]

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-using PriceCheck.DB.FoodCenter;
+using PriceCheck.DB.Common;
+using PriceCheck.DB.ExternalServices.FoodCenter;
 
 namespace PriceCheck.DB.Controllers
 {

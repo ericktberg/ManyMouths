@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PriceCheck.DB.ORM
+namespace PriceCheck.DB.Persistence.Entities
 {
     /// <summary>
     /// Represents a transaction to purchase a good at a certain store location

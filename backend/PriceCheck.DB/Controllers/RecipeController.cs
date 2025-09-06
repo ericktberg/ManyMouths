@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using PriceCheck.DB.DTOs;
-using PriceCheck.DB.ORM;
+using PriceCheck.DB.Persistence;
+using PriceCheck.DB.Persistence.Entities;
 
 namespace PriceCheck.DB.Controllers
 {
@@ -12,9 +13,9 @@ namespace PriceCheck.DB.Controllers
     [Route("api/[controller]")]
     public class RecipesController : ControllerBase
     {
-        private readonly ManyMouthsContext _context;
+        private readonly ManyMouthsDbContext _context;
 
-        public RecipesController(ManyMouthsContext context)
+        public RecipesController(ManyMouthsDbContext context)
         {
             _context = context;
         }
@@ -184,7 +185,7 @@ namespace PriceCheck.DB.Controllers
                 return NotFound();
             }
 
-            var recipe = new RecipeDetailDTO(recipeObj, ingredientMappingsDict);
+            var recipe = new RecipeDetailDTO(recipeObj);
 
             return Ok(recipe);
         }

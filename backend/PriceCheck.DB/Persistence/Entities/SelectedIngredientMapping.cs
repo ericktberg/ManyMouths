@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PriceCheck.DB.ORM
+namespace PriceCheck.DB.Persistence.Entities
 {
     /// <summary>
     /// Each user has a unique selection of ingredient mapped to a good.

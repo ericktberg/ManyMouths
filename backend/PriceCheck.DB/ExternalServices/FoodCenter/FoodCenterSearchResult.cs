@@ -1,4 +1,4 @@
-﻿namespace PriceCheck.DB.FoodCenter
+﻿namespace PriceCheck.DB.ExternalServices.FoodCenter
 {
     public record FoodCenterSearchResult
     {

@@ -2,8 +2,8 @@ using Microsoft.EntityFrameworkCore;
 
 using MySql.Data.MySqlClient;
 
-using PriceCheck.DB.FoodCenter;
-using PriceCheck.DB.ORM;
+using PriceCheck.DB.ExternalServices.FoodCenter;
+using PriceCheck.DB.Persistence;
 
 namespace PriceCheck.DB
 {
@@ -11,7 +11,7 @@ namespace PriceCheck.DB
     {
         public static IServiceCollection RegisterServices(this IServiceCollection services)
         {
-            services.AddDbContext<ManyMouthsContext>(
+            services.AddDbContext<ManyMouthsDbContext>(
                 options =>
                 {
                     string password = services.BuildServiceProvider()

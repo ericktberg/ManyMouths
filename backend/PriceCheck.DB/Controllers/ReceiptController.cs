@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 using PriceCheck.DB.DTOs;
-using PriceCheck.DB.FoodCenter;
-using PriceCheck.DB.ORM;
+using PriceCheck.DB.ExternalServices.FoodCenter;
+using PriceCheck.DB.Persistence;
+using PriceCheck.DB.Persistence.Entities;
 
 namespace PriceCheck.DB.Controllers
 {
@@ -10,10 +11,10 @@ namespace PriceCheck.DB.Controllers
     [Route("api/[controller]")]
     public class ReceiptController : ControllerBase
     {
-        private readonly ManyMouthsContext _context;
+        private readonly ManyMouthsDbContext _context;
         private readonly FoodCenterConnection _foodCenterConnection;
 
-        public ReceiptController(ManyMouthsContext context, FoodCenterConnection foodCenterConnection)
+        public ReceiptController(ManyMouthsDbContext context, FoodCenterConnection foodCenterConnection)
         {
             _context = context;
             this._foodCenterConnection = foodCenterConnection;

@@ -1,7 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PriceCheck.DB.ORM
+namespace PriceCheck.DB.Persistence.Entities
 {
+    public enum CodeTypes
+    {
+        None = 0,
+        PLU = 1,
+        UPC = 2
+    }
+
     /// <summary>
     /// Represents a purchasable good at a store.
     /// Does not directly represent an ingredient, but is used to map ingredients to something that can be purchased.

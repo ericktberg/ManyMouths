@@ -1,4 +1,4 @@
-﻿using PriceCheck.DB.ORM;
+﻿using PriceCheck.DB.Persistence.Entities;
 
 namespace PriceCheck.DB.DTOs
 {

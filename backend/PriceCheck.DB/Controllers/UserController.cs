@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 
 using PriceCheck.DB.DTOs;
-using PriceCheck.DB.ORM;
+using PriceCheck.DB.Persistence;
+using PriceCheck.DB.Persistence.Entities;
 
 namespace PriceCheck.DB.Controllers
 {
@@ -10,9 +11,9 @@ namespace PriceCheck.DB.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly ManyMouthsContext _context;
+        private readonly ManyMouthsDbContext _context;
 
-        public UsersController(ManyMouthsContext context)
+        public UsersController(ManyMouthsDbContext context)
         {
             _context = context;
         }

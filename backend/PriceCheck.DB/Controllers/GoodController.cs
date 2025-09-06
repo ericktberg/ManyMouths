@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-using PriceCheck.DB.ORM;
+using PriceCheck.DB.Persistence;
 
 namespace PriceCheck.DB.Controllers
 {
@@ -8,9 +8,9 @@ namespace PriceCheck.DB.Controllers
     [Route("[controller]")]
     public class GoodController : ControllerBase
     {
-        private readonly ManyMouthsContext _context;
+        private readonly ManyMouthsDbContext _context;
 
-        public GoodController(ManyMouthsContext context)
+        public GoodController(ManyMouthsDbContext context)
         {
             _context = context;
         }

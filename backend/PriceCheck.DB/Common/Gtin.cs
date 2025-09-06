@@ -1,4 +1,4 @@
-﻿namespace PriceCheck.DB
+﻿namespace PriceCheck.DB.Common
 {
     /// <summary>
     /// https://en.wikipedia.org/wiki/Global_Trade_Item_Number
