@@ -1,51 +1,49 @@
-import { RecipeCreation, RecipeInput } from '@/components/forms/recipe-creation-form';
-import { RecipesService, RecipeCreationDto } from '@/src/api-client';
+import { RecipeCreationForm } from '@/components/forms/recipe-creation-form';
+import { RecipeInputModel } from '@/src/domain-models/recipe-models';
+import { RecipeRepository } from '@/src/repositories/recipe-repository';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router, Stack } from 'expo-router';
 import React from 'react';
 import { Alert } from 'react-native';
 
-function OnBack() {
-    if (router.canGoBack()) {
-        router.back();
-    }
-    else {
-        router.navigate("recipes");
-    }
-}
-
-async function OnSave(recipe: RecipeInput) {
-    try {
-        const response = await RecipesService.postApiRecipes({
-            instructionMarkdownText: recipe.instructions,
-            servings: recipe.servings,
-            cookTimeMinutes: recipe.cookTime,
-            prepTimeMinutes: recipe.prepTime,
-            name: recipe.name,
-            description: recipe.description,
-            ingredients: recipe.ingredients.map((i) => ({
-                name: i.name,
-                quantity: parseInt(i.amount) || 1,
-                unit: i.unit
-            }))
-        })
-
-        // Assuming the response includes the new recipe's ID
-        const newRecipeId = response.id;
-
-        // Navigate to the recipe detail page
-        router.push(`/recipes/${newRecipeId}`);
-    } catch (error) {
-        console.error("Failed to save recipe:", error);
-
-        // Show a user-friendly message
-        Alert.alert(
-            "Save failed",
-            "We couldn't save your recipe. Please try again later."
-        );
-    }
-}
-
 export default function CreateRecipePage() {
+    const queryClient = useQueryClient();
+
+    const createRecipeMutation = useMutation({
+        mutationFn: async (recipe: RecipeInputModel) => await RecipeRepository.createRecipe(recipe),
+        onSuccess: (data) => {
+            // Invalidate the recipes list so it refetches
+            queryClient.invalidateQueries({ queryKey: ['recipes'] });
+
+            // Navigate to the new recipe's detail page
+            const newRecipeId = data?.recipeId;
+            if (newRecipeId) {
+                router.push(`/recipes/${newRecipeId}`);
+            } else {
+                router.push('/recipes');
+            }
+        },
+        onError: (error) => {
+            Alert.alert(
+                "Save failed",
+                "We couldn't save your recipe. Please try again later."
+            );
+        }
+    });
+
+    function OnBack() {
+        if (router.canGoBack()) {
+            router.back();
+        }
+        else {
+            router.navigate("recipes");
+        }
+    }
+
+    function OnSave(recipe: RecipeInputModel) {
+        createRecipeMutation.mutate(recipe);
+    }
+
     return (
         <>
             <Stack.Screen
@@ -57,8 +55,7 @@ export default function CreateRecipePage() {
                     headerShown: false
                 }}
             />
-            {/* Your page content */}
-            <RecipeCreation onBack={OnBack} onSave={OnSave} />
+            <RecipeCreationForm onBack={OnBack} onSave={OnSave} />
         </>
     );
 }

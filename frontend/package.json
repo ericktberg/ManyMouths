@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@rn-primitives/slot": "^1.2.0",
+    "@tanstack/react-query": "^5.87.1",
     "@types/react": "~18.2.79",
     "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",

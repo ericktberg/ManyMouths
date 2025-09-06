@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
+import { RecipeDetailsModel } from "@/src/domain-models/recipe-models";
 
 interface RecipeOverviewProps {
   recipe: RecipeDetailsModel;
@@ -27,13 +28,6 @@ export function RecipeOverview({
   onLinkIngredients,
   isInMeal
 }: RecipeOverviewProps) {
-  const [recipeImage, setRecipeImage] = useState<string | null>(null);
-  const insets = useSafeAreaInsets();
-
-  const getTagColor = (index: number) => {
-    const colors = ['tomato', 'lime', 'blueberry', 'grape', 'orange'];
-    return colors[index % colors.length];
-  };
 
   const parseInstructions = (instructions: string) => {
     return instructions.split('\n').filter(line => line.trim()).map((step, index) => {
@@ -50,12 +44,7 @@ export function RecipeOverview({
       return null;
     }).filter(Boolean);
   };
-
-  const instructions = parseInstructions(recipe.instructions);
-  const unlinkedIngredients = recipe.ingredients.filter(ing =>
-    !['Hoisin sauce', 'Chicken thighs'].includes(ing.name)
-  );
-
+  
   return (
     <View className='flex justify-center align-middle'>
       <HeaderControls recipe={recipe} />

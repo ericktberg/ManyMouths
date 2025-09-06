@@ -2,10 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Recipe } from '../models/Recipe';
 import type { RecipeCreationDto } from '../models/RecipeCreationDto';
 import type { RecipeDetailDTO } from '../models/RecipeDetailDTO';
-import type { RecipeDTO } from '../models/RecipeDTO';
 import type { RecipeOverviewDTO } from '../models/RecipeOverviewDTO';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -13,12 +11,12 @@ import { request as __request } from '../core/request';
 export class RecipesService {
     /**
      * @param requestBody
-     * @returns RecipeDTO Success
+     * @returns RecipeDetailDTO Success
      * @throws ApiError
      */
     public static postApiRecipes(
         requestBody?: RecipeCreationDto,
-    ): CancelablePromise<RecipeDTO> {
+    ): CancelablePromise<RecipeDetailDTO> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/Recipes',
@@ -71,13 +69,13 @@ export class RecipesService {
     /**
      * @param recipeId
      * @param requestBody
-     * @returns any Success
+     * @returns RecipeDetailDTO Success
      * @throws ApiError
      */
     public static putApiRecipes(
         recipeId: number,
-        requestBody?: Recipe,
-    ): CancelablePromise<any> {
+        requestBody?: RecipeCreationDto,
+    ): CancelablePromise<RecipeDetailDTO> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/Recipes/{recipeId}',

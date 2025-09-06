@@ -7,22 +7,6 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class UsersService {
     /**
-     * @param userId
-     * @returns any Success
-     * @throws ApiError
-     */
-    public static getApiUsersRecipes(
-        userId: number,
-    ): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/Users/{userId}/recipes',
-            path: {
-                'userId': userId,
-            },
-        });
-    }
-    /**
      * @returns any Success
      * @throws ApiError
      */

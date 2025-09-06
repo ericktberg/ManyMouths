@@ -3,11 +3,12 @@ import { View, Text, Pressable, ScrollView, Alert } from 'react-native';
 import { Plus, Timer, Users, ChefHat, Play, MapPin } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { RecipeOverviewDTO, RecipesService } from '@/src/api-client';
+import { RecipeOverviewModel } from '@/src/domain-models/recipe-models';
 
 interface RecipeListProps {
-  onCreateRecipe: () => void;
+  onCreateRecipeClick: () => void;
   onRecipeClick: (recipeId?: number) => void;
-  onMapIngredients: (recipeId?: number) => void;
+  recipes: RecipeOverviewModel[];
 }
 
 // Custom Button component for better reusability and handling state
@@ -28,45 +29,12 @@ const CustomButton = ({ children, onPress, className, disabled, ...props }: any)
   );
 };
 
-export function RecipeList({ onCreateRecipe, onRecipeClick, onMapIngredients }: RecipeListProps) {
-  const [recipes, setRecipes] = useState<RecipeOverviewDTO[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string>("");
-
+export function RecipeList({ onCreateRecipeClick, onRecipeClick, recipes }: RecipeListProps) {
+  
   const getTagColor = (index: number) => {
     const colors = ['#FF6347', '#9ACD32', '#4169E1', '#8A2BE2', '#FFA500']; // Using hex codes for compatibility
     return colors[index % colors.length];
   };
-
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-
-        const fetchedData = await RecipesService.getApiRecipes();
-
-        console.log('Fetched data:', fetchedData);
-
-        setRecipes(fetchedData);
-      }
-      catch (e) {
-        setError("Failed to fetch recipes");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRecipes();
-  }, []);  // Run once per component
-
-  if (isLoading)
-  {
-    return <Text>Loading...</Text>
-  }
-  else if (error !== "")
-  {
-    return <Text>{error}</Text>
-  }
-
 
   return (
     <ScrollView contentContainerClassName="p-4" className="w-full items-center">
@@ -78,7 +46,7 @@ export function RecipeList({ onCreateRecipe, onRecipeClick, onMapIngredients }: 
           <Text className="text-sm text-gray-500 mt-1">Delicious meals with cost tracking</Text>
         </View>
         <Pressable
-          onPress={onCreateRecipe}
+          onPress={onCreateRecipeClick}
           className="bg-primary rounded-full w-11 h-11 items-center justify-center shadow-lg"
         >
           <Plus size={20} color="white" />
@@ -86,10 +54,10 @@ export function RecipeList({ onCreateRecipe, onRecipeClick, onMapIngredients }: 
       </View>
 
    <View className="space-y-4">
-        {recipes.map((recipe) => (
+        {recipes.map((recipe : RecipeOverviewModel) => (
           <Pressable
-            key={recipe.id}
-            onPress={() => onRecipeClick(recipe.id)}
+            key={recipe.recipeId}
+            onPress={() => onRecipeClick(recipe.recipeId)}
             className={`bg-white rounded-xl p-4 shadow-sm border border-gray-200 hover:transform hover:scale-[1.02] hover:border-orange
                 hover:shadow-md`}
           >
@@ -144,7 +112,7 @@ export function RecipeList({ onCreateRecipe, onRecipeClick, onMapIngredients }: 
                 className="flex-1 rounded-lg hover:shadow-md hover:opacity-90"
               >
                 <Pressable
-                  onPress={() => onRecipeClick(recipe.id)}
+                  onPress={() => onRecipeClick(recipe.recipeId)}
                   className={`flex-1 p-2 flex-row items-center justify-center `}
                 >
                   <Play size={12} color="white" />
@@ -162,7 +130,7 @@ export function RecipeList({ onCreateRecipe, onRecipeClick, onMapIngredients }: 
           <Text className="text-sm text-gray-500 mb-6 text-center">
             Create your first recipe to start tracking costs
           </Text>
-          <CustomButton onPress={onCreateRecipe} className="bg-primary px-4 py-2 rounded-lg">
+          <CustomButton onPress={onCreateRecipeClick} className="bg-primary px-4 py-2 rounded-lg">
             <Text className="text-white">Create Recipe</Text>
           </CustomButton>
         </View>

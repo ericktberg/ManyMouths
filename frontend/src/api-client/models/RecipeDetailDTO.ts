@@ -2,16 +2,15 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { GoodDTOLight } from './GoodDTOLight';
 import type { RecipeIngredientDTO } from './RecipeIngredientDTO';
 export type RecipeDetailDTO = {
-    readonly id?: number;
-    readonly name?: string | null;
-    readonly description?: string | null;
-    readonly prepTimeMinutes?: number;
-    readonly cookTimeMinutes?: number;
-    readonly servings?: number;
+    id?: number;
+    name?: string | null;
+    description?: string | null;
+    prepTimeMinutes?: number;
+    cookTimeMinutes?: number;
+    servings?: number;
+    markdownInstructions?: string | null;
     ingredients?: Array<RecipeIngredientDTO> | null;
-    ingredientMappings?: Record<string, GoodDTOLight> | null;
 };
 

@@ -22,47 +22,31 @@ import {
   ReplyIcon
 } from 'lucide-react-native';
 import DropDownPicker, { ItemType, ValueType } from 'react-native-dropdown-picker';
-import { RecipeCreationDto } from '@/src/api-client';
 import { produce } from 'immer';
+import { RecipeInputModel, IngredientInputModel } from '@/src/domain-models/recipe-models'
 
-export interface RecipeInput {
-  name: string,
-  description: string,
-  instructions: string,
-  servings: number,
-  prepTime: number,
-  cookTime: number,
-  ingredients: IngredientListEntry[]
-}
-
-interface IngredientListEntry {
-  id: string;
-  name: string;
-  amount: string;
-  unit: string;
-}
 
 interface RecipeCreationProps {
   onBack: () => void;
-  onSave: (recipe: RecipeInput) => void;
+  onSave: (recipe: RecipeInputModel) => void;
 }
 
 interface RecipeSubMenuProps {
-  recipeInfo: RecipeInput,
-  setRecipeInfo: React.Dispatch<React.SetStateAction<RecipeInput>>;
+  recipeInfo: RecipeInputModel,
+  setRecipeInfo: React.Dispatch<React.SetStateAction<RecipeInputModel>>;
 }
 
-export function RecipeCreation({ onBack, onSave }: RecipeCreationProps) {
+export function RecipeCreationForm({ onBack, onSave }: RecipeCreationProps) {
   // Local effects
   const [activeTab, setActiveTab] = useState<'info' | 'ingredients' | 'instructions'>('info');
 
-  const [recipeInfo, setRecipeInfo] = useState<RecipeInput>({
+  const [recipeInfo, setRecipeInfo] = useState<RecipeInputModel>({
     name: '',
     description: '',
     instructions: '',
     servings: 0,
-    prepTime: 0,
-    cookTime: 0,
+    prepTimeMinutes: 0,
+    cookTimeMinutes: 0,
     ingredients: []
   });
 
@@ -253,9 +237,9 @@ function InformationTab({ recipeInfo, setRecipeInfo }: RecipeSubMenuProps) {
               <TextInput
                 className="bg-white border-2 border-gray-200 focus:border-orange-400 rounded-lg px-3 py-2 text-base"
                 placeholder="15"
-                value={recipeInfo.prepTime.toString()}
+                value={recipeInfo.prepTimeMinutes.toString()}
                 onChangeText={(text) => setRecipeInfo(prev => produce(prev, draft => {
-                  draft.prepTime = parseInt(text) || 0;
+                  draft.prepTimeMinutes = parseInt(text) || 0;
                 }))}
                 keyboardType="numeric"
               />
@@ -268,9 +252,9 @@ function InformationTab({ recipeInfo, setRecipeInfo }: RecipeSubMenuProps) {
               <TextInput
                 className="bg-white border-2 border-gray-200 focus:border-orange-400 rounded-lg px-3 py-2 text-base"
                 placeholder="30"
-                value={recipeInfo.cookTime.toString()}
+                value={recipeInfo.cookTimeMinutes.toString()}
                 onChangeText={(text) => setRecipeInfo(prev => produce(prev, draft => {
-                  draft.cookTime = parseInt(text) || 0;
+                  draft.cookTimeMinutes = parseInt(text) || 0;
                 }))}
                 keyboardType="numeric"
               />
@@ -301,9 +285,9 @@ function IngredientsTab({ recipeInfo, setRecipeInfo }: RecipeSubMenuProps) {
   const handleAddIngredientAndReset = (input: IngredientInput) => {
     setRecipeInfo(prev => produce(prev, draft => {
       draft.ingredients.push({
-        id: Date.now().toString(), // simple unique-ish id
+        id: Date.now().toString(),
         name: input.name,
-        amount: input.amount,
+        amount: parseFloat(parseFloat(input.amount).toFixed(1)) || 0,
         unit: input.unit,
       });
     }))
