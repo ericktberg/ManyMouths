@@ -21,6 +21,7 @@ export type { ReceiptDto } from './models/ReceiptDto';
 export type { Recipe } from './models/Recipe';
 export type { RecipeCreationDto } from './models/RecipeCreationDto';
 export type { RecipeDetailDTO } from './models/RecipeDetailDTO';
+export type { RecipeDTO } from './models/RecipeDTO';
 export type { RecipeIngredientDTO } from './models/RecipeIngredientDTO';
 export type { RecipeOverviewDTO } from './models/RecipeOverviewDTO';
 export type { RecipeOwner } from './models/RecipeOwner';

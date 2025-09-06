@@ -62,10 +62,9 @@ namespace PriceCheck.DB
             });
 
             builder.Services.RegisterServices();
-
             var app = builder.Build();
 
-            // Middleware
+            // Development/Prod config
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -73,18 +72,26 @@ namespace PriceCheck.DB
             }
             else
             {
-                app.UseExceptionHandler("/error"); // optional global handler
+                app.UseExceptionHandler("/error");
                 app.UseHsts();
             }
 
+            // Must come **before routing if you want to enforce auth early**
             app.UseHttpsRedirection();
-            app.UseRouting();
-            app.UseAuthorization();
             app.UseCors("AllowMyOrigins");
 
-            app.MapControllers(); // Only maps API controllers
+            // Routing comes first
+            app.UseRouting();
+
+            // **Authentication MUST come before Authorization**
+            //app.UseAuthentication();
+            //app.UseAuthorization();
+
+            // Map controllers AFTER authentication/authorization
+            app.MapControllers();
 
             app.Run();
+
         }
     }
 }

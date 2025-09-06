@@ -2,6 +2,26 @@
 
 namespace PriceCheck.DB.DTOs
 {
+
+    public class RecipeCreationDto
+    {
+        public int UserId { get; init; }
+
+        public string Name { get; init; } = "";
+
+        public string Description { get; init; } = "";
+
+        public string InstructionMarkdownText { get; init; } = "";
+
+        public int PrepTimeMinutes { get; init; }
+
+        public int CookTimeMinutes { get; init; }
+
+        public int Servings { get; init; }
+
+        public List<RecipeIngredientDTO> Ingredients { get; init; }
+    }
+
     public enum RecipeCostingStatus
     {
         /// <summary>
@@ -23,6 +43,7 @@ namespace PriceCheck.DB.DTOs
 
         public double GroceryCostTotal { get; }
     }
+
 
     public record RecipeOverviewDTO
     {

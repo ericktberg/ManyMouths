@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,7 @@ namespace PriceCheck.DB.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(RecipeDTO), 200)]
         public async Task<IActionResult> CreateRecipe([FromBody] RecipeCreationDto recipeDto)
         {
             if (recipeDto == null || string.IsNullOrEmpty(recipeDto.Name) || recipeDto.Ingredients == null || !recipeDto.Ingredients.Any())
@@ -33,17 +35,22 @@ namespace PriceCheck.DB.Controllers
                 var recipe = new Recipe
                 {
                     Name = recipeDto.Name,
+                    Description = recipeDto.Description,
+                    CookTimeMinutes = recipeDto.CookTimeMinutes,
+                    PrepTimeMinutes = recipeDto.PrepTimeMinutes,
+                    Servings = recipeDto.Servings,
+                    MarkdownInstructions = recipeDto.InstructionMarkdownText
                 };
                 _context.Recipes.Add(recipe);
                 await _context.SaveChangesAsync();
 
                 // Associate the recipe with the user
-                var recipeOwner = new RecipeOwner
-                {
-                    RecipeId = recipe.Id,
-                    UserId = recipeDto.UserId
-                };
-                _context.RecipeOwners.Add(recipeOwner);
+                //var recipeOwner = new RecipeOwner
+                //{
+                //    RecipeId = recipe.Id,
+                //    UserId = recipeDto.UserId
+                //};
+                //_context.RecipeOwners.Add(recipeOwner);
 
                 // Process each ingredient
                 foreach (var ingredientDto in recipeDto.Ingredients)
@@ -89,7 +96,11 @@ namespace PriceCheck.DB.Controllers
                     .ThenInclude(rq => rq.Ingredient)
                     .FirstOrDefaultAsync(r => r.Id == recipe.Id);
 
-                return CreatedAtAction(nameof(GetRecipeDetails), recipe.Id, new RecipeDTO(createdRecipe));
+                return CreatedAtAction(
+                    nameof(GetRecipeDetails),
+                    new { recipeId = recipe.Id }, // matches the route parameter exactly
+                    new RecipeDTO(createdRecipe)
+                );
             }
             catch (Exception ex)
             {

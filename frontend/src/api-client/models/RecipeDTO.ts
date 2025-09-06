@@ -3,14 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { RecipeIngredientDTO } from './RecipeIngredientDTO';
-export type RecipeCreationDto = {
-    userId?: number;
-    name?: string | null;
-    description?: string | null;
-    instructionMarkdownText?: string | null;
-    prepTimeMinutes?: number;
-    cookTimeMinutes?: number;
-    servings?: number;
+export type RecipeDTO = {
+    readonly id?: number;
+    readonly name?: string | null;
+    readonly description?: string | null;
+    readonly prepTimeMinutes?: number;
+    readonly cookTimeMinutes?: number;
+    readonly servings?: number;
     ingredients?: Array<RecipeIngredientDTO> | null;
 };
 

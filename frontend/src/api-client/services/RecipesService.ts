@@ -5,6 +5,7 @@
 import type { Recipe } from '../models/Recipe';
 import type { RecipeCreationDto } from '../models/RecipeCreationDto';
 import type { RecipeDetailDTO } from '../models/RecipeDetailDTO';
+import type { RecipeDTO } from '../models/RecipeDTO';
 import type { RecipeOverviewDTO } from '../models/RecipeOverviewDTO';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -12,12 +13,12 @@ import { request as __request } from '../core/request';
 export class RecipesService {
     /**
      * @param requestBody
-     * @returns any Success
+     * @returns RecipeDTO Success
      * @throws ApiError
      */
     public static postApiRecipes(
         requestBody?: RecipeCreationDto,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<RecipeDTO> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/Recipes',

@@ -7,10 +7,10 @@ import {
   View, Text, ScrollView, TouchableOpacity, Image, StyleSheet,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button } from '@/ui/button';
-import { Badge } from '@/ui/badge';
-import { Card, CardContent } from '@/ui/card';
-import { Separator } from '@/ui/separator';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { RecipeDetailDTO, RecipeOverviewDTO, RecipesService } from '@/src/api-client';
 
