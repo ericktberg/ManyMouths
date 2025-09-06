@@ -34,27 +34,17 @@ namespace PriceCheck.DB.DTOs
 
     public record RecipeOverviewDTO
     {
-        public RecipeOverviewDTO(Recipe recipe)
-        {
-            Id = recipe.Id;
-            Name = recipe.Name;
-            Description = recipe.Description;
-            PrepTimeMinutes = recipe.PrepTimeMinutes;
-            CookTimeMinutes = recipe.CookTimeMinutes;
-            Servings = recipe.Servings;
-        }
+        public int Id { get; init; }
 
-        public int Id { get; }
+        public string Name { get; init; }
 
-        public string Name { get; }
+        public string Description { get; init; }
 
-        public string Description { get; }
+        public int PrepTimeMinutes { get; init; }
 
-        public int PrepTimeMinutes { get; }
+        public int CookTimeMinutes { get; init; }
 
-        public int CookTimeMinutes { get; }
-
-        public int Servings { get; }
+        public int Servings { get; init; }
     }
 
     /// <summary>
@@ -62,14 +52,12 @@ namespace PriceCheck.DB.DTOs
     /// </summary>
     public record RecipeDetailDTO : RecipeOverviewDTO
     {
-        public RecipeDetailDTO(Recipe recipe) : base(recipe)
+        public RecipeDetailDTO() 
         {
-            Ingredients = recipe.IngredientQuantities.Select(RecipeIngredientDTO.FromQuant).ToList();
-            MarkdownInstructions = recipe.MarkdownInstructions;
         }
 
-        public string MarkdownInstructions { get; }
+        public string MarkdownInstructions { get; init; }
 
-        public List<RecipeIngredientDTO> Ingredients { get; } = new();
+        public ICollection<RecipeIngredientDTO> Ingredients { get; init; }
     }
 }

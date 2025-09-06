@@ -18,25 +18,25 @@ namespace PriceCheck.DB.Controllers
             _context = context;
         }
 
-        [HttpGet("{userId}/recipes")]
-        public async Task<IActionResult> GetUserRecipes(int userId)
-        {
-            User? user = await _context.Users
-                .Where(u => u.UserId == userId)
-                .Include(u => u.OwnedRecipes)
-                .ThenInclude(r => r.Recipe)
-                .FirstOrDefaultAsync();
+        //[HttpGet("{userId}/recipes")]
+        //public async Task<IActionResult> GetUserRecipes(int userId)
+        //{
+        //    User? user = await _context.Users
+        //        .Where(u => u.UserId == userId)
+        //        .Include(u => u.OwnedRecipes)
+        //        .ThenInclude(r => r.Recipe)
+        //        .FirstOrDefaultAsync();
 
-            if (user == null)
-            {
-                return NotFound();
-            }
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var recipes = user.OwnedRecipes.Select(r => r.Recipe)
-                .Select(r => new RecipeOverviewDTO(r));
+        //    var recipes = user.OwnedRecipes.Select(r => r.Recipe)
+        //        .Select(r => new RecipeOverviewDTO(r));
 
-            return Ok(recipes);
-        }
+        //    return Ok(recipes);
+        //}
 
         [HttpGet]
         public IActionResult GetUsers()

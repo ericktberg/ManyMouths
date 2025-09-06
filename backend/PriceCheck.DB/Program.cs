@@ -4,6 +4,8 @@ using MySql.Data.MySqlClient;
 
 using PriceCheck.DB.ExternalServices.FoodCenter;
 using PriceCheck.DB.Persistence;
+using PriceCheck.DB.Repositories;
+using PriceCheck.DB.Services;
 
 namespace PriceCheck.DB
 {
@@ -12,9 +14,9 @@ namespace PriceCheck.DB
         public static IServiceCollection RegisterServices(this IServiceCollection services)
         {
             services.AddDbContext<ManyMouthsDbContext>(
-                options =>
+                (serviceProvider, options) =>
                 {
-                    string password = services.BuildServiceProvider()
+                    string password = serviceProvider
                         .GetRequiredService<SecretsFile>()
                         .GetSecret("db.Password.ManyMouths");
 
@@ -34,6 +36,12 @@ namespace PriceCheck.DB
             services.AddSingleton<HttpClient>();
             services.AddSingleton<SecretsFile>();
             services.AddTransient<FoodCenterConnection>();
+
+            // Add Services
+            services.AddScoped<IRecipeService, RecipeService>();
+
+            // Add Repositories
+            services.AddScoped<IRecipeRepository, RecipeRepository>();
 
             return services;
         }

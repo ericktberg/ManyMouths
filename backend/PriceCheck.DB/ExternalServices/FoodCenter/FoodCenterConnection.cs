@@ -22,8 +22,6 @@ namespace PriceCheck.DB.ExternalServices.FoodCenter
 
         public SecretsFile Secrets { get; }
 
-
-
         /// <summary>
         /// Search the Food Center database for a food with the given GTIN / UPC code
         /// </summary>
