@@ -20,7 +20,7 @@ namespace PriceCheck.DB.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(RecipeDTO), 200)]
+        [ProducesResponseType(typeof(RecipeDetailDTO), 200)]
         public async Task<IActionResult> CreateRecipe([FromBody] RecipeCreationDto recipeDto)
         {
             if (recipeDto == null || string.IsNullOrEmpty(recipeDto.Name) || recipeDto.Ingredients == null || !recipeDto.Ingredients.Any())
@@ -99,7 +99,7 @@ namespace PriceCheck.DB.Controllers
                 return CreatedAtAction(
                     nameof(GetRecipeDetails),
                     new { recipeId = recipe.Id }, // matches the route parameter exactly
-                    new RecipeDTO(createdRecipe)
+                    new RecipeDetailDTO(createdRecipe)
                 );
             }
             catch (Exception ex)
@@ -167,6 +167,7 @@ namespace PriceCheck.DB.Controllers
                 .Include(u => u.SelectedIngredientMappings)
                 .ThenInclude(sim => sim.Mapping)
                 .ThenInclude(m => m.Good);
+
             Dictionary<int, GoodDTOLight?> ingredientMappingsDict = new();
             foreach (var i in recipeObj.IngredientQuantities.Select(iq => iq.IngredientId))
             {

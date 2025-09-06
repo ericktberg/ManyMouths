@@ -32,19 +32,6 @@ namespace PriceCheck.DB.DTOs
         FullyCalculated
     }
 
-    public record RecipeCostingDTO
-    {
-        public RecipeCostingDTO()
-        {
-
-        }
-
-        public double SmartCostTotal { get; }
-
-        public double GroceryCostTotal { get; }
-    }
-
-
     public record RecipeOverviewDTO
     {
         public RecipeOverviewDTO(Recipe recipe)
@@ -73,23 +60,18 @@ namespace PriceCheck.DB.DTOs
     /// <summary>
     /// Include costing and ingredient mapping details with a recipe
     /// </summary>
-    public record RecipeDetailDTO : RecipeDTO
+    public record RecipeDetailDTO : RecipeOverviewDTO
     {
         public RecipeDetailDTO(Recipe recipe, IDictionary<int, GoodDTOLight?> ingredientMappings) : base(recipe)
         {
+            Ingredients = recipe.IngredientQuantities.Select(RecipeIngredientDTO.FromQuant).ToList();
             IngredientMappings = ingredientMappings;
         }
 
+        public string MarkdownInstructions { get; }
+
         public IDictionary<int, GoodDTOLight?> IngredientMappings { get; }
-    }
-
-    public record RecipeDTO : RecipeOverviewDTO
-    {
-        public RecipeDTO(Recipe recipe) : base(recipe)
-        {
-            Ingredients = recipe.IngredientQuantities.Select(RecipeIngredientDTO.FromQuant).ToList();
-        }
-
+        
         public List<RecipeIngredientDTO> Ingredients { get; init; } = new();
     }
 }
