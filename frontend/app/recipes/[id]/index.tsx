@@ -1,4 +1,4 @@
-import { Text } from 'react-native';
+import { Text, View, ScrollView } from 'react-native';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { RecipeOverview } from '@/components/forms/recipe-details-page';
 import { useQuery } from '@tanstack/react-query';
@@ -19,47 +19,66 @@ export default function RecipeDetailsPage() {
   const navigation = useNavigation();
 
   useEffect(() => {
-    navigation.setOptions({ title: s.data?.name || 'Recipe Details' });
+    navigation.setOptions({
+      title: s.data?.name || 'Recipe Details',
+      headerShown: false,
+    });
   }, [navigation, s.data?.name]);
 
   if (s.isLoading) {
-    return <Text>Loading...</Text>;
-  }
-  else if (s.error) {
-    return <Text>Error: {s.error.message}</Text>;
+    return (
+      <View className="flex-1 h-full justify-center items-center">
+        <Text>Loading...</Text>
+      </View>
+    );
+  } else if (s.error) {
+    return (
+      <View className="flex-1 h-full justify-center items-center">
+        <Text>Error: {s.error.message}</Text>
+      </View>
+    );
   }
 
   const recipe = s.data;
   if (!recipe) {
-    return <Text>No recipe found.</Text>;
-  }
-  else {
+    return (
+      <View className="flex-1 h-full justify-center items-center">
+        <Text>No recipe found.</Text>
+      </View>
+    );
+  } else {
     function OnAddToMeal() {
       // Add to the meal api - not yet written
     }
 
     return (
-      <RecipeOverview
-        recipe={recipe}
-        onAddToMeal={OnAddToMeal}
-        onBack={router.back}
-        onEdit={function (): void {
-          throw new Error('Function not implemented.');
-        }}
-        onRate={function (): void {
-          throw new Error('Function not implemented.');
-        }}
-        onGoToMeal={function (): void {
-          throw new Error('Function not implemented.');
-        }}
-        onStartCooking={function (): void {
-          throw new Error('Function not implemented.');
-        }
-        }
-        onLinkIngredients={function (): void {
-          throw new Error('Function not implemented.');
-        }}
-        isInMeal={false} />
+      <ScrollView className="flex-1 h-full" contentContainerStyle={{ flexGrow: 1 }}>
+        <View className="flex-1 h-full justify-center items-center">
+          <View className="items-center justify-center w-full max-w-[500px]">
+            <RecipeOverview
+              recipe={recipe}
+              onAddToMeal={OnAddToMeal}
+              onBack={router.back}
+              onEdit={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              onRate={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              onGoToMeal={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              onStartCooking={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              onLinkIngredients={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              isInMeal={false}
+            />
+          </View>
+        </View>
+      </ScrollView>
     );
   }
 }

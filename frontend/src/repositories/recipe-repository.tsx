@@ -71,7 +71,12 @@ export class RecipeRepository {
         return {
             ...RecipeRepository.transformToOverviewModel(dto),
             instructions: dto.markdownInstructions || "",
-            ingredients: []
+            ingredients: (dto.ingredients || []).map(ingredient => ({
+                id: ingredient.id ?? ingredient.name ?? '',
+                name: ingredient.name ?? '',
+                amount: ingredient.quantity ?? 0,
+                unit: ingredient.unit ?? ''
+            }))
         }
     }
 }

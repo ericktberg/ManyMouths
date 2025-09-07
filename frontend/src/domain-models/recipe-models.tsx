@@ -1,4 +1,5 @@
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
+import { IngredientBaseModel } from "./ingredient-models";
 
 export interface RecipeOverviewModel
 {

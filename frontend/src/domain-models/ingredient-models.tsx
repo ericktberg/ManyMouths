@@ -1,5 +1,7 @@
 
-interface IngredientBaseModel
-{
-    name: string,
+export interface IngredientBaseModel {
+    id: string | number;
+    name: string;
+    amount: number;
+    unit: string;
 }

@@ -4,6 +4,7 @@ import { View, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { RecipeDetailsModel } from "@/src/domain-models/recipe-models";
+import { router } from "expo-router";
 
 interface RecipeOverviewProps {
   recipe: RecipeDetailsModel;
@@ -29,28 +30,101 @@ export function RecipeOverview({
   isInMeal
 }: RecipeOverviewProps) {
 
-  const parseInstructions = (instructions: string) => {
-    return instructions.split('\n').filter(line => line.trim()).map((step, index) => {
-      const stepMatch = step.match(/^(\d+)\.\s*(.*)/);
-      if (stepMatch) {
-        return {
-          number: parseInt(stepMatch[1]),
-          text: stepMatch[2],
-          hasTimer: /\[\d{2}:\d{2}\]/.test(step),
-          hasTemperature: /\d+°[FC]/.test(step),
-          hasIngredient: /\[[^\]]+\]/.test(step) && !/\[\d{2}:\d{2}\]/.test(step)
-        };
-      }
-      return null;
-    }).filter(Boolean);
+  // For now, mock linked status for demo. In real app, this would come from API/model.
+  const getLinkedStatus = (ingredient: any) => {
+    // Demo: first 2 linked, rest not
+    const idx = recipe.ingredients.indexOf(ingredient);
+    if (idx < 2) return 'linked';
+    return 'needs-linking';
   };
-  
+
   return (
-    <View className='flex justify-center align-middle'>
+    <View className="flex-1 bg-white">
+      {/* Header Controls */}
       <HeaderControls recipe={recipe} />
-      <Text>{recipe.description}</Text>
+
+      {/* Title Card */}
+      <View className="bg-white rounded-2xl shadow-md mx-4 mt-2 p-4 flex-row items-center justify-between">
+        <View style={{flex: 1}}>
+          <Text className="text-2xl font-bold text-gray-900 mb-1">{recipe.name}</Text>
+          <View className="flex-row items-center mb-1">
+            <Text className="text-xs text-gray-500 mr-2">• Cooked 8x</Text>
+            <Text className="text-xs text-yellow-500">★ 4.6</Text>
+          </View>
+        </View>
+        <View className="flex-row items-center gap-2">
+          <Text className="bg-green-200 text-green-700 font-bold px-3 py-1 rounded-full text-sm ml-2">$12.50</Text>
+        </View>
+      </View>
+
+      {/* Meta Info Row */}
+      <View className="flex-row justify-around mt-4 mb-2 mx-4">
+        <View className="items-center flex-1">
+          <Text className="text-orange-500 text-lg font-bold">Prep</Text>
+          <Text className="text-xl font-bold text-gray-900">{recipe.prepTimeMinutes}m</Text>
+        </View>
+        <View className="items-center flex-1">
+          <Text className="text-yellow-600 text-lg font-bold">Cook</Text>
+          <Text className="text-xl font-bold text-gray-900">{recipe.cookTimeMinutes}m</Text>
+        </View>
+        <View className="items-center flex-1">
+          <Text className="text-blue-600 text-lg font-bold">Serves</Text>
+          <Text className="text-xl font-bold text-gray-900">{recipe.servings}</Text>
+        </View>
+      </View>
+
+      {/* Description */}
+      <Text className="text-gray-600 text-base mx-6 mt-2 mb-2">{recipe.description}</Text>
+
+      {/* Tags */}
+      <View className="flex-row flex-wrap gap-2 mx-6 mb-2">
+        <Text className="bg-red-100 text-red-500 px-2 py-1 rounded-full text-xs">Quick</Text>
+        <Text className="bg-green-100 text-green-500 px-2 py-1 rounded-full text-xs">Asian</Text>
+        <Text className="bg-blue-100 text-blue-500 px-2 py-1 rounded-full text-xs">Protein</Text>
+        <Text className="bg-purple-100 text-purple-500 px-2 py-1 rounded-full text-xs">Family-Friendly</Text>
+      </View>
+
+      {/* Action Buttons */}
+      <View className="mx-4 mt-2 mb-2">
+        <View className="flex-row items-center mb-2">
+          <View className="flex-1 bg-orange-400 rounded-lg mr-2">
+            <Text className="text-white text-center py-2 font-bold text-base">+ Add to Meal</Text>
+          </View>
+        </View>
+        <View className="flex-row gap-2 mb-2">
+          <View className="flex-1 border border-gray-300 rounded-lg mr-2">
+            <Text className="text-center py-2 font-semibold text-gray-700">▶ Start Cooking</Text>
+          </View>
+          <View className="flex-1 border border-gray-300 rounded-lg">
+            <Text className="text-center py-2 font-semibold text-gray-700">♡ Rate Recipe</Text>
+          </View>
+        </View>
+        <View className="flex-row items-center justify-center mb-2">
+          <Text className="text-gray-600 text-base">🔗 Link Ingredients (6 unlinked)</Text>
+        </View>
+      </View>
+
+      {/* Ingredients Card */}
+      <View className="bg-white border border-gray-200 rounded-2xl shadow-sm mx-4 mb-6 p-4">
+        <View className="flex-row items-center mb-2">
+          <Text className="text-lg font-bold text-green-700 mr-2">🛒 Ingredients</Text>
+        </View>
+        {recipe.ingredients.map((ingredient, idx) => (
+          <View key={ingredient.id || idx} className="flex-row items-center justify-between mb-1">
+            <View className="flex-row items-center">
+              <Text className="text-base text-gray-900 mr-2">{ingredient.name}</Text>
+              {getLinkedStatus(ingredient) === 'linked' ? (
+                <Text className="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs ml-1">✓ Linked</Text>
+              ) : (
+                <Text className="bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full text-xs ml-1">Needs linking</Text>
+              )}
+            </View>
+            <Text className="text-base text-gray-700">{ingredient.amount} {ingredient.unit}</Text>
+          </View>
+        ))}
+      </View>
     </View>
-  )
+  );
 }
 
 interface HeaderControlsProps {
@@ -58,19 +132,17 @@ interface HeaderControlsProps {
 }
 
 function HeaderControls({ recipe }: HeaderControlsProps) {
-  /* Header Controls
-       - Back Button (integrated in view)
-       - Edit button
-       - Favorite button
-
-      This is a single bar that places them in the appropriate locations
-     */
+  // Always go to the recipes list
+  const goToRecipesList = () => {
+    router.replace('/recipes');
+  };
   return (
     <View className='flex flex-row p-2 justify-between items-start'>
       <Button
         variant="secondary"
         size="sm"
         className="transparent backdrop-blur-sm hover:bg-orange"
+        onPress={goToRecipesList}
       >
         <ArrowLeft className="h-4 w-4" />
       </Button>
