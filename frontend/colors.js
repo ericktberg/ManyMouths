@@ -8,7 +8,7 @@ export const appColors = {
     banana: "#ffcc02",
     avocado: "#30d158",
     cherry: "#ff2d92",
-    orange: "#ff9500",
+    tangerine: "#ff9500",
     grape: "#af52de",
     textdisabledforeground: "#808080",
     background: "#ffffff",

@@ -1,9 +1,10 @@
-import { Text, View, ScrollView } from 'react-native';
+import React, { useEffect } from 'react';
+import { Text, View } from 'react-native';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { RecipeOverview } from '@/components/forms/recipe-details-page';
 import { useQuery } from '@tanstack/react-query';
 import { RecipeRepository } from '@/src/repositories/recipe-repository';
-import { useEffect } from "react";
+import { IngredientBaseModel } from '@/src/domain-models/ingredient-models';
 
 
 export default function RecipeDetailsPage() {
@@ -27,13 +28,13 @@ export default function RecipeDetailsPage() {
 
   if (s.isLoading) {
     return (
-      <View className="flex-1 h-full justify-center items-center">
+      <View className="flex-1 justify-center items-center">
         <Text>Loading...</Text>
       </View>
     );
   } else if (s.error) {
     return (
-      <View className="flex-1 h-full justify-center items-center">
+      <View className="flex-1 justify-center items-center">
         <Text>Error: {s.error.message}</Text>
       </View>
     );
@@ -42,7 +43,7 @@ export default function RecipeDetailsPage() {
   const recipe = s.data;
   if (!recipe) {
     return (
-      <View className="flex-1 h-full justify-center items-center">
+      <View className="flex-1 justify-center items-center">
         <Text>No recipe found.</Text>
       </View>
     );
@@ -51,34 +52,51 @@ export default function RecipeDetailsPage() {
       // Add to the meal api - not yet written
     }
 
+    function handleLinkIngredientClick(ingredient: IngredientBaseModel) {
+      router.push({ pathname: `/(modals)/ingredients/${ingredient.id}/link-ingredients` });
+    }
+
+    // Example: function to handle linking an ingredient (API call)
+    async function handleLinkIngredient() {
+      // Call your API/mutation here
+      // await RecipeRepository.linkIngredientToRecipe(recipeId, ingredientId, linkData);
+      // Optionally refetch or update state
+    }
+
+    // Example: function to fetch extra ingredient info
+    async function fetchIngredientInfo() {
+      // return await RecipeRepository.fetchIngredientDetails(ingredientId);
+    }
+
     return (
-      <ScrollView className="flex-1 h-full" contentContainerStyle={{ flexGrow: 1 }}>
-        <View className="flex-1 h-full justify-center items-center">
-          <View className="items-center justify-center w-full max-w-[500px]">
-            <RecipeOverview
-              recipe={recipe}
-              onAddToMeal={OnAddToMeal}
-              onBack={router.back}
-              onEdit={function (): void {
-                throw new Error('Function not implemented.');
-              }}
-              onRate={function (): void {
-                throw new Error('Function not implemented.');
-              }}
-              onGoToMeal={function (): void {
-                throw new Error('Function not implemented.');
-              }}
-              onStartCooking={function (): void {
-                throw new Error('Function not implemented.');
-              }}
-              onLinkIngredients={function (): void {
-                throw new Error('Function not implemented.');
-              }}
-              isInMeal={false}
-            />
-          </View>
+      <View className="flex-1 items-center">
+        <View className="items-center justify-center w-full max-w-[500px]">
+          <RecipeOverview
+            recipe={recipe}
+            onAddToMeal={OnAddToMeal}
+            onBack={router.back}
+            onEdit={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            onRate={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            onGoToMeal={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            onStartCooking={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            onLinkIngredients={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            isInMeal={false}
+            handleLinkIngredientClick={handleLinkIngredientClick}
+            onLinkIngredient={handleLinkIngredient}
+            fetchIngredientInfo={fetchIngredientInfo}
+          />
         </View>
-      </ScrollView>
+      </View>
     );
   }
 }

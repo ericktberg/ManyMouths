@@ -1,4 +1,6 @@
+
 import { appColors } from './colors';
+const { colors: defaultColors } = require('tailwindcss/defaultTheme');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -15,34 +17,26 @@ module.exports = {
                 sans: ["Nunito", "System"],
             },
             colors: {
+                ...defaultColors,
                 background: "#fefefe",
                 foreground: "oklch(0.145 0 0)",
-
                 card: "#ffffff",
                 "card-foreground": "oklch(0.145 0 0)",
-
                 popover: "#ffffff",
                 "popover-foreground": "oklch(0.145 0 0)",
-
                 primary: "#ff6b35",
                 "primary-foreground": "#ffffff",
-
                 secondary: "#f7f3f0",
                 "secondary-foreground": "#2d1b1b",
-
                 muted: "#f8f4f1",
                 "muted-foreground": "#6b7280",
-
                 accent: "#fef3ee",
                 "accent-foreground": "#ea580c",
-
                 destructive: "#ef4444",
                 "destructive-foreground": "#ffffff",
-
                 border: "rgba(0,0,0,0.1)",
                 input: "#f9f7f4",
                 ring: "#ff6b35",
-
                 // food colors
                 ...appColors
             },

@@ -1,10 +1,12 @@
 import { ArrowLeft, Edit3 } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button } from "@/components/ui/button";
 import { RecipeDetailsModel } from "@/src/domain-models/recipe-models";
 import { router } from "expo-router";
+import { IngredientBaseModel } from "@/src/domain-models/ingredient-models";
+import Modal from "react-native-modal";
 
 interface RecipeOverviewProps {
   recipe: RecipeDetailsModel;
@@ -16,6 +18,9 @@ interface RecipeOverviewProps {
   onStartCooking: () => void;
   onLinkIngredients: () => void;
   isInMeal: boolean;
+  handleLinkIngredientClick: (ingredient: IngredientBaseModel) => void;
+  onLinkIngredient: () => Promise<void>;
+  fetchIngredientInfo: () => Promise<any>;
 }
 
 export function RecipeOverview({
@@ -27,8 +32,14 @@ export function RecipeOverview({
   onGoToMeal,
   onStartCooking,
   onLinkIngredients,
-  isInMeal
+  isInMeal,
+  handleLinkIngredientClick,
+  onLinkIngredient,
+  fetchIngredientInfo
 }: RecipeOverviewProps) {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedIngredient, setSelectedIngredient] = useState<IngredientBaseModel | null>(null);
+  const [ingredientInfo, setIngredientInfo] = useState<any>(null);
 
   // For now, mock linked status for demo. In real app, this would come from API/model.
   const getLinkedStatus = (ingredient: any) => {
@@ -38,13 +49,30 @@ export function RecipeOverview({
     return 'needs-linking';
   };
 
+  async function handleIngredientClick(ingredient: IngredientBaseModel) {
+    setSelectedIngredient(ingredient);
+    setModalVisible(true);
+    // Fetch extra info if needed
+    const info = await fetchIngredientInfo();
+    setIngredientInfo(info);
+  }
+
+  async function handleLink() {
+    if (selectedIngredient) {
+      await onLinkIngredient();
+      setModalVisible(false);
+      setSelectedIngredient(null);
+      setIngredientInfo(null);
+    }
+  }
+
   return (
-    <View className="flex-1 bg-white">
+    <View className=" bg-white">
       {/* Header Controls */}
       <HeaderControls recipe={recipe} />
 
       {/* Title Card */}
-      <View className="bg-white rounded-2xl shadow-md mx-4 mt-2 p-4 flex-row items-center justify-between">
+      <View className="border-2 border-orange-500  rounded-2xl shadow-md mx-4 mt-2 p-4 flex-row items-center justify-between">
         <View style={{flex: 1}}>
           <Text className="text-2xl font-bold text-gray-900 mb-1">{recipe.name}</Text>
           <View className="flex-row items-center mb-1">
@@ -109,20 +137,52 @@ export function RecipeOverview({
         <View className="flex-row items-center mb-2">
           <Text className="text-lg font-bold text-green-700 mr-2">🛒 Ingredients</Text>
         </View>
-        {recipe.ingredients.map((ingredient, idx) => (
-          <View key={ingredient.id || idx} className="flex-row items-center justify-between mb-1">
-            <View className="flex-row items-center">
-              <Text className="text-base text-gray-900 mr-2">{ingredient.name}</Text>
-              {getLinkedStatus(ingredient) === 'linked' ? (
-                <Text className="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs ml-1">✓ Linked</Text>
-              ) : (
-                <Text className="bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full text-xs ml-1">Needs linking</Text>
-              )}
+        {/* Ingredient List */}
+        {recipe.ingredients.map((ingredient, idx) => {
+          const linked = getLinkedStatus(ingredient) === 'linked';
+          return (
+            <View key={ingredient.id || idx} className="flex-row items-center justify-between mb-1">
+              <View className="flex-row items-center">
+                <Text className="text-base text-gray-900 mr-2">{ingredient.name}</Text>
+                {linked ? (
+                  <Text className="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs ml-1">✓ Linked</Text>
+                ) : null}
+              </View>
+              <View className="flex-row items-center gap-2">
+                <Text className="text-base text-gray-700">{ingredient.amount} {ingredient.unit}</Text>
+                {!linked && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => handleIngredientClick(ingredient)}
+                  >
+                    Link
+                  </Button>
+                )}
+              </View>
             </View>
-            <Text className="text-base text-gray-700">{ingredient.amount} {ingredient.unit}</Text>
-          </View>
-        ))}
+          );
+        })}
       </View>
+
+      {/* Link Ingredient Modal */}
+      <Modal isVisible={modalVisible} onBackdropPress={() => setModalVisible(false)}>
+        <View className="bg-white p-4 rounded-lg shadow-lg">
+          <Text className="text-lg font-bold mb-4">Link Ingredient</Text>
+          {ingredientInfo && (
+            <View>
+              <Text className="text-gray-800 mb-2">Ingredient: {ingredientInfo.name}</Text>
+              {/* Add more ingredient details here as needed */}
+            </View>
+          )}
+          <Button
+            onPress={() => handleLink(/* linkData */)}
+            className="bg-blue-600 rounded-lg py-2"
+          >
+            Does Nothing
+          </Button>
+        </View>
+      </Modal>
     </View>
   );
 }
