@@ -29,11 +29,11 @@ namespace PriceCheck.DB.Controllers
         /// Creates or updates a mapping between an ingredient and a good for a user.
         /// </summary>
         /// <param name="mapping">The mapping creation DTO containing ingredient, good, and user IDs.</param>
-        /// <returns>A lightweight DTO for the mapped good, or BadRequest if any referenced entity is not found.</returns>
-        /// <response code="200">Returns the mapped good as a DTO.</response>
+        /// <returns>A lightweight DTO for the mapped ingredient-to-good mapping, or BadRequest if any referenced entity is not found.</returns>
+        /// <response code="200">Returns the mapped ingredient-to-good mapping as a DTO.</response>
         /// <response code="400">If the ingredient, good, or user is not found.</response>
         [HttpPost]
-        [ProducesResponseType(typeof(GoodDTOLight), 200)]
+        [ProducesResponseType(typeof(IngredientMappingDTOLight), 200)]
         public async Task<IActionResult> CreateMapping(IngredientMappingCreationDTO mapping)
         {
             var result = await _ingredientMappingService.CreateMappingAsync(mapping);
@@ -46,11 +46,11 @@ namespace PriceCheck.DB.Controllers
         /// Retrieves the mapped good for a given user and ingredient.
         /// </summary>
         /// <param name="ingredientId">The ingredient ID to look up.</param>
-        /// <returns>A lightweight DTO for the mapped good, or NotFound if no mapping exists.</returns>
-        /// <response code="200">Returns the mapped good as a DTO.</response>
+        /// <returns>A lightweight DTO for the mapped ingredient-to-good mapping, or NotFound if no mapping exists.</returns>
+        /// <response code="200">Returns the mapped ingredient-to-good mapping as a DTO.</response>
         /// <response code="404">If no mapping exists for the user and ingredient.</response>
         [HttpGet]
-        [ProducesResponseType(typeof(GoodDTOLight), 200)]
+        [ProducesResponseType(typeof(IngredientMappingDTOLight), 200)]
         public async Task<IActionResult> GetUserMappingForIngredient(int ingredientId)
         {
             int userId = 1; // TODO: Replace with actual user context

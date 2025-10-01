@@ -15,16 +15,16 @@ namespace PriceCheck.DB.Repositories
         /// Creates a new mapping between an ingredient and a good, or retrieves the existing one. Also updates the user's selection.
         /// </summary>
         /// <param name="mappingDto">The mapping creation DTO containing ingredient, good, and user IDs.</param>
-        /// <returns>The mapped <see cref="Good"/>, or null if any referenced entity is not found.</returns>
-        Task<Good?> CreateOrGetMappingAsync(IngredientMappingCreationDTO mappingDto);
+        /// <returns>The mapped <see cref="IngredientMapping"/>, or null if any referenced entity is not found.</returns>
+        Task<IngredientMapping?> CreateOrGetMappingAsync(IngredientMappingCreationDTO mappingDto);
 
         /// <summary>
-        /// Retrieves the <see cref="Good"/> mapped to an ingredient for a specific user.
+        /// Retrieves the <see cref="IngredientMapping"/> mapped to an ingredient for a specific user.
         /// </summary>
         /// <param name="userId">The user ID.</param>
         /// <param name="ingredientId">The ingredient ID.</param>
-        /// <returns>The mapped <see cref="Good"/>, or null if not found.</returns>
-        Task<Good?> GetUserMappingForIngredientAsync(int userId, int ingredientId);
+        /// <returns>The mapped <see cref="IngredientMapping"/>, or null if not found.</returns>
+        Task<IngredientMapping?> GetUserMappingForIngredientAsync(int userId, int ingredientId);
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ namespace PriceCheck.DB.Repositories
         /// If the mapping does not exist, it is created. The user's selection is updated to point to the mapping.
         /// If any referenced entity (ingredient, good, user) does not exist, returns null.
         /// </remarks>
-        public async Task<Good?> CreateOrGetMappingAsync(IngredientMappingCreationDTO mapping)
+        public async Task<IngredientMapping?> CreateOrGetMappingAsync(IngredientMappingCreationDTO mapping)
         {
             var ingredient = await _context.Ingredients.FindAsync(mapping.IngredientId);
             if (ingredient == null) return null;
@@ -64,6 +64,8 @@ namespace PriceCheck.DB.Repositories
             if (user == null) return null;
 
             var existingMapping = await _context.IngredientMappings
+                .Include(im => im.Good)
+                .Include(im => im.Ingredient)
                 .FirstOrDefaultAsync(im => im.IngredientId == mapping.IngredientId && im.GoodId == mapping.GoodId);
 
             IngredientMapping mappingEntity;
@@ -103,22 +105,24 @@ namespace PriceCheck.DB.Repositories
             }
 
             await _context.SaveChangesAsync();
-            return mappingEntity.Good;
+            return mappingEntity;
         }
 
         /// <inheritdoc/>
         /// <remarks>
-        /// Uses eager loading to include the mapped <see cref="Good"/> entity.
+        /// Uses eager loading to include the mapped <see cref="Good"/> and <see cref="Ingredient"/> entities.
         /// Returns null if no mapping exists for the user and ingredient.
         /// </remarks>
-        public async Task<Good?> GetUserMappingForIngredientAsync(int userId, int ingredientId)
+        public async Task<IngredientMapping?> GetUserMappingForIngredientAsync(int userId, int ingredientId)
         {
-            var mapping = await _context.IngredientMappingSelections
+            var mappingSelection = await _context.IngredientMappingSelections
                 .Include(s => s.Mapping)
-                .ThenInclude(m => m.Good)
+                    .ThenInclude(m => m.Good)
+                .Include(s => s.Mapping)
+                    .ThenInclude(m => m.Ingredient)
                 .FirstOrDefaultAsync(s => s.UserId == userId && s.IngredientId == ingredientId);
 
-            return mapping?.Mapping?.Good;
+            return mappingSelection?.Mapping;
         }
     }
 }

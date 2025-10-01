@@ -14,16 +14,16 @@ namespace PriceCheck.DB.Services
         /// Creates or updates a mapping between an ingredient and a good for a user, returning a lightweight DTO.
         /// </summary>
         /// <param name="mappingDto">The mapping creation DTO containing ingredient, good, and user IDs.</param>
-        /// <returns>A <see cref="GoodDTOLight"/> if successful, or null if any referenced entity is not found.</returns>
-        Task<GoodDTOLight?> CreateMappingAsync(IngredientMappingCreationDTO mappingDto);
+        /// <returns>A <see cref="IngredientMappingDTOLight"/> if successful, or null if any referenced entity is not found.</returns>
+        Task<IngredientMappingDTOLight?> CreateMappingAsync(IngredientMappingCreationDTO mappingDto);
 
         /// <summary>
         /// Retrieves the mapped good for a given user and ingredient as a lightweight DTO.
         /// </summary>
         /// <param name="userId">The user ID.</param>
         /// <param name="ingredientId">The ingredient ID.</param>
-        /// <returns>A <see cref="GoodDTOLight"/> if found, or null otherwise.</returns>
-        Task<GoodDTOLight?> GetUserMappingForIngredientAsync(int userId, int ingredientId);
+        /// <returns>A <see cref="IngredientMappingDTOLight"/> if found, or null otherwise.</returns>
+        Task<IngredientMappingDTOLight?> GetUserMappingForIngredientAsync(int userId, int ingredientId);
     }
 
     /// <summary>
@@ -48,22 +48,22 @@ namespace PriceCheck.DB.Services
 
         /// <inheritdoc/>
         /// <remarks>
-        /// Converts the mapped <see cref="Good"/> entity to a <see cref="GoodDTOLight"/> for API response.
+        /// Converts the mapped <see cref="IngredientMapping"/> entity to a <see cref="IngredientMappingDTOLight"/> for API response.
         /// </remarks>
-        public async Task<GoodDTOLight?> CreateMappingAsync(IngredientMappingCreationDTO mappingDto)
+        public async Task<IngredientMappingDTOLight?> CreateMappingAsync(IngredientMappingCreationDTO mappingDto)
         {
-            var good = await _repository.CreateOrGetMappingAsync(mappingDto);
-            return good != null ? new GoodDTOLight(good) : null;
+            var mapping = await _repository.CreateOrGetMappingAsync(mappingDto);
+            return mapping != null ? new IngredientMappingDTOLight(mapping) : null;
         }
 
         /// <inheritdoc/>
         /// <remarks>
-        /// Converts the mapped <see cref="Good"/> entity to a <see cref="GoodDTOLight"/> for API response.
+        /// Converts the mapped <see cref="IngredientMapping"/> entity to a <see cref="IngredientMappingDTOLight"/> for API response.
         /// </remarks>
-        public async Task<GoodDTOLight?> GetUserMappingForIngredientAsync(int userId, int ingredientId)
+        public async Task<IngredientMappingDTOLight?> GetUserMappingForIngredientAsync(int userId, int ingredientId)
         {
-            var good = await _repository.GetUserMappingForIngredientAsync(userId, ingredientId);
-            return good != null ? new GoodDTOLight(good) : null;
+            var mapping = await _repository.GetUserMappingForIngredientAsync(userId, ingredientId);
+            return mapping != null ? new IngredientMappingDTOLight(mapping) : null;
         }
     }
 }
