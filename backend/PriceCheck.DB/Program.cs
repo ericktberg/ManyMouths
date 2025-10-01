@@ -40,10 +40,12 @@ namespace PriceCheck.DB
             // Add Services
             services.AddScoped<IRecipeService, RecipeService>();
             services.AddScoped<IIngredientMappingService, IngredientMappingService>();
+            services.AddScoped<IGoodService, GoodService>();
 
             // Add Repositories
             services.AddScoped<IRecipeRepository, RecipeRepository>();
             services.AddScoped<IIngredientMappingRepository, IngredientMappingRepository>();
+            services.AddScoped<IGoodRepository, GoodRepository>();
 
             return services;
         }
