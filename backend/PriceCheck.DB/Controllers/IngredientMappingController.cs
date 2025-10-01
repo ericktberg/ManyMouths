@@ -1,108 +1,63 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
 using PriceCheck.DB.DTOs;
-using PriceCheck.DB.Persistence;
-using PriceCheck.DB.Persistence.Entities;
+using PriceCheck.DB.Services;
 
 namespace PriceCheck.DB.Controllers
 {
-
+    /// <summary>
+    /// API controller for managing ingredient-to-good mappings and user-specific selections.
+    /// </summary>
+    /// <remarks>
+    /// Delegates business logic to <see cref="IIngredientMappingService"/>. All responses are returned as lightweight DTOs.
+    /// </remarks>
     [ApiController]
     [Route("api/[controller]")]
     public class IngredientMappingController : ControllerBase
     {
-        private readonly ManyMouthsDbContext _context;
+        private readonly IIngredientMappingService _ingredientMappingService;
 
-        public IngredientMappingController(ManyMouthsDbContext context)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IngredientMappingController"/> class.
+        /// </summary>
+        /// <param name="ingredientMappingService">The ingredient mapping service to use for business logic.</param>
+        public IngredientMappingController(IIngredientMappingService ingredientMappingService)
         {
-            _context = context;
+            _ingredientMappingService = ingredientMappingService;
         }
 
+        /// <summary>
+        /// Creates or updates a mapping between an ingredient and a good for a user.
+        /// </summary>
+        /// <param name="mapping">The mapping creation DTO containing ingredient, good, and user IDs.</param>
+        /// <returns>A lightweight DTO for the mapped good, or BadRequest if any referenced entity is not found.</returns>
+        /// <response code="200">Returns the mapped good as a DTO.</response>
+        /// <response code="400">If the ingredient, good, or user is not found.</response>
         [HttpPost]
+        [ProducesResponseType(typeof(GoodDTOLight), 200)]
         public async Task<IActionResult> CreateMapping(IngredientMappingCreationDTO mapping)
         {
-            var ingredient = _context.Ingredients.Find(mapping.IngredientId);
-            if (ingredient == null)
-            {
-                return BadRequest("Ingredient not found");
-            }
-
-            var good = _context.Goods.Find(mapping.GoodId);
-            if (good == null)
-            {
-                return BadRequest("Good not found");
-            }
-
-            var user = _context.Users.Find(mapping.UserId);
-            if (user == null)
-            {
-                return BadRequest("User not found");
-            }
-
-            /* Insert the mapping if it does not exists */
-            var existingMapping = _context.IngredientMappings
-                .FirstOrDefault(im => im.IngredientId == mapping.IngredientId && im.GoodId == mapping.GoodId);
-
-            IngredientMapping mappingEntity;
-            if (existingMapping != null)
-            {
-                mappingEntity = existingMapping;
-            }
-            else
-            {
-                mappingEntity = new IngredientMapping()
-                {
-                    Ingredient = ingredient,
-                    Good = good
-                };
-
-                _context.IngredientMappings.Add(mappingEntity);
-                _context.SaveChanges();
-            }
-
-            /* Select the mapping for our user. Update the current record if it exists,
-             * otherwise add a new one.
-             */
-            var currentSelection = _context.IngredientMappingSelections
-                .Find(mapping.UserId, mapping.IngredientId);
-
-            if (currentSelection != null)
-            {
-                currentSelection.Mapping = mappingEntity;
-            }
-            else
-            {
-                currentSelection = new SelectedIngredientMapping()
-                {
-                    Ingredient = ingredient,
-                    User = user,
-                    Mapping = mappingEntity
-                };
-
-                _context.IngredientMappingSelections.Add(currentSelection);
-            }
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new GoodDTOLight(mappingEntity.Good));
+            var result = await _ingredientMappingService.CreateMappingAsync(mapping);
+            if (result == null)
+                return BadRequest("Ingredient, Good, or User not found");
+            return Ok(result);
         }
 
+        /// <summary>
+        /// Retrieves the mapped good for a given user and ingredient.
+        /// </summary>
+        /// <param name="ingredientId">The ingredient ID to look up.</param>
+        /// <returns>A lightweight DTO for the mapped good, or NotFound if no mapping exists.</returns>
+        /// <response code="200">Returns the mapped good as a DTO.</response>
+        /// <response code="404">If no mapping exists for the user and ingredient.</response>
         [HttpGet]
+        [ProducesResponseType(typeof(GoodDTOLight), 200)]
         public async Task<IActionResult> GetUserMappingForIngredient(int ingredientId)
         {
-            int userId = 1;  // Hard-code to 1 for now
-            var mapping = await _context.IngredientMappingSelections
-                .Include(s => s.Mapping)
-                .ThenInclude(m => m.Good)
-                .FirstOrDefaultAsync(s => s.UserId == userId && s.IngredientId == ingredientId);
-
-            if (mapping is null)
-            {
+            int userId = 1; // TODO: Replace with actual user context
+            var result = await _ingredientMappingService.GetUserMappingForIngredientAsync(userId, ingredientId);
+            if (result == null)
                 return NotFound();
-            }
-
-            return Ok(new GoodDTOLight(mapping.Mapping.Good));
+            return Ok(result);
         }
     }
 }

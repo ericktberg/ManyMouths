@@ -7,6 +7,8 @@ import { RecipeDetailsModel } from "@/src/domain-models/recipe-models";
 import { router } from "expo-router";
 import { IngredientBaseModel } from "@/src/domain-models/ingredient-models";
 import Modal from "react-native-modal";
+import { useQuery } from "@tanstack/react-query";
+import { IngredientMappingService } from "@/src/services/ingredient-mapping-service";
 
 interface RecipeOverviewProps {
   recipe: RecipeDetailsModel;
@@ -41,12 +43,25 @@ export function RecipeOverview({
   const [selectedIngredient, setSelectedIngredient] = useState<IngredientBaseModel | null>(null);
   const [ingredientInfo, setIngredientInfo] = useState<any>(null);
 
-  // For now, mock linked status for demo. In real app, this would come from API/model.
-  const getLinkedStatus = (ingredient: any) => {
-    // Demo: first 2 linked, rest not
-    const idx = recipe.ingredients.indexOf(ingredient);
-    if (idx < 2) return 'linked';
-    return 'needs-linking';
+  const { data: ingredientMappings } = useQuery({
+    queryKey: ['ingredient-mappings', recipe.recipeId],
+    queryFn: async () => {
+      const mappings: Record<string, any> = {};
+      for (const ingredient of recipe.ingredients) {
+        try {
+          const mapping = await IngredientMappingService.getApiIngredientMapping(Number(ingredient.id));
+          mappings[ingredient.id] = mapping;
+        } catch {
+          mappings[ingredient.id] = null;
+        }
+      }
+      return mappings;
+    }
+  });
+
+  // Replace the mock getLinkedStatus function with a real query
+  const getLinkedStatus = (ingredient: IngredientBaseModel) => {
+    return ingredientMappings?.[ingredient.id] ? 'linked' : 'needs-linking';
   };
 
   async function handleIngredientClick(ingredient: IngredientBaseModel) {
