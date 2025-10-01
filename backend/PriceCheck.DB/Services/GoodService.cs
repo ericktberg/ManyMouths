@@ -48,7 +48,7 @@ namespace PriceCheck.DB.Services
                 GoodId = goodId,
                 Price = (int)priceDto.Price,
                 Unit = priceDto.Unit,
-                StoreLocationId = priceDto.StoreLocationId ?? 0
+                StoreLocationId = priceDto.StoreLocationId ?? 1
             };
             var created = await _goodRepository.AddPriceAsync(transaction);
             return new GoodTransactionDTO(created);

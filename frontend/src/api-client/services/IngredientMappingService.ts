@@ -3,18 +3,19 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { IngredientMappingCreationDTO } from '../models/IngredientMappingCreationDTO';
+import type { IngredientMappingDTOLight } from '../models/IngredientMappingDTOLight';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class IngredientMappingService {
     /**
      * @param requestBody
-     * @returns any Success
+     * @returns IngredientMappingDTOLight Success
      * @throws ApiError
      */
     public static postApiIngredientMapping(
         requestBody?: IngredientMappingCreationDTO,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<IngredientMappingDTOLight> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/IngredientMapping',
@@ -24,12 +25,12 @@ export class IngredientMappingService {
     }
     /**
      * @param ingredientId
-     * @returns any Success
+     * @returns IngredientMappingDTOLight Success
      * @throws ApiError
      */
     public static getApiIngredientMapping(
         ingredientId?: number,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<IngredientMappingDTOLight> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/IngredientMapping',

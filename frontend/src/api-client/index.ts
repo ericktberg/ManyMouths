@@ -7,9 +7,14 @@ export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
+export type { AddPriceDTO } from './models/AddPriceDTO';
+export type { CreateGoodDTO } from './models/CreateGoodDTO';
 export type { FoodCenterFoodRecord } from './models/FoodCenterFoodRecord';
+export type { GoodDTOLight } from './models/GoodDTOLight';
 export type { GoodTransactionDto } from './models/GoodTransactionDto';
+export type { GoodTransactionDTO } from './models/GoodTransactionDTO';
 export type { IngredientMappingCreationDTO } from './models/IngredientMappingCreationDTO';
+export type { IngredientMappingDTOLight } from './models/IngredientMappingDTOLight';
 export type { ProblemDetails } from './models/ProblemDetails';
 export type { ReceiptDto } from './models/ReceiptDto';
 export type { RecipeCreationDto } from './models/RecipeCreationDto';

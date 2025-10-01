@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { RecipeDetailsModel } from "@/src/domain-models/recipe-models";
 import { router } from "expo-router";
 import { IngredientBaseModel } from "@/src/domain-models/ingredient-models";
-import Modal from "react-native-modal";
 import { useQuery } from "@tanstack/react-query";
-import { IngredientMappingService } from "@/src/services/ingredient-mapping-service";
+import { IngredientMappingService } from "@/src/api-client";
+import { LinkIngredientModal } from "@/components/modals/LinkIngredientModal";
 
 interface RecipeOverviewProps {
   recipe: RecipeDetailsModel;
@@ -41,7 +41,6 @@ export function RecipeOverview({
 }: RecipeOverviewProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedIngredient, setSelectedIngredient] = useState<IngredientBaseModel | null>(null);
-  const [ingredientInfo, setIngredientInfo] = useState<any>(null);
 
   const { data: ingredientMappings } = useQuery({
     queryKey: ['ingredient-mappings', recipe.recipeId],
@@ -64,22 +63,20 @@ export function RecipeOverview({
     return ingredientMappings?.[ingredient.id] ? 'linked' : 'needs-linking';
   };
 
-  async function handleIngredientClick(ingredient: IngredientBaseModel) {
+  const handleIngredientClick = (ingredient: IngredientBaseModel) => {
     setSelectedIngredient(ingredient);
     setModalVisible(true);
-    // Fetch extra info if needed
-    const info = await fetchIngredientInfo();
-    setIngredientInfo(info);
-  }
+  };
 
-  async function handleLink() {
-    if (selectedIngredient) {
-      await onLinkIngredient();
-      setModalVisible(false);
-      setSelectedIngredient(null);
-      setIngredientInfo(null);
-    }
-  }
+  const handleModalClose = () => {
+    setModalVisible(false);
+    setSelectedIngredient(null);
+  };
+
+  const handleModalSuccess = () => {
+    // The modal will handle invalidating queries and closing itself
+    setSelectedIngredient(null);
+  };
 
   return (
     <View className=" bg-white">
@@ -181,23 +178,13 @@ export function RecipeOverview({
       </View>
 
       {/* Link Ingredient Modal */}
-      <Modal isVisible={modalVisible} onBackdropPress={() => setModalVisible(false)}>
-        <View className="bg-white p-4 rounded-lg shadow-lg">
-          <Text className="text-lg font-bold mb-4">Link Ingredient</Text>
-          {ingredientInfo && (
-            <View>
-              <Text className="text-gray-800 mb-2">Ingredient: {ingredientInfo.name}</Text>
-              {/* Add more ingredient details here as needed */}
-            </View>
-          )}
-          <Button
-            onPress={() => handleLink(/* linkData */)}
-            className="bg-blue-600 rounded-lg py-2"
-          >
-            Does Nothing
-          </Button>
-        </View>
-      </Modal>
+      <LinkIngredientModal
+        isVisible={modalVisible}
+        ingredientId={selectedIngredient?.id || ''}
+        ingredientName={selectedIngredient?.name}
+        onClose={handleModalClose}
+        onSuccess={handleModalSuccess}
+      />
     </View>
   );
 }

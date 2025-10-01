@@ -245,9 +245,6 @@ export default function LinkIngredientModal() {
             <View className="bg-gray-100 p-4 rounded-lg mb-4">
               <Text className="font-semibold">Latest Price</Text>
               <Text>${latestPriceQuery.data.price} per {latestPriceQuery.data.unit}</Text>
-              <Text className="text-gray-500 text-sm">
-                {new Date(latestPriceQuery.data.createdDate).toLocaleDateString()}
-              </Text>
             </View>
           )}
 

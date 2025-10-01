@@ -2,9 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type GoodTransactionDTO = {
-    id?: number;
-    price?: number;
-    unit?: string | null;
+export type CreateGoodDTO = {
+    friendlyName?: string | null;
+    storeCode?: string | null;
 };
 
